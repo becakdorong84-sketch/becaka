@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/houstonfloorcover.html';
+include __DIR__ . '/logodesignjackson.html';
 exit;
 }
 
 
-include __DIR__ . '/houstonfloorcover-com-contact.txt';
+include __DIR__ . '/logodesignjackson-com-design-tools.txt';
 exit;
 ?>
