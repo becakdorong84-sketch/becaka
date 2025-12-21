@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/logodesignjackson.html';
+include __DIR__ . '/logodesignmcallen.html';
 exit;
 }
 
 
-include __DIR__ . '/logodesignjackson-com-design-tools.txt';
+include __DIR__ . '/logodesignmcallen-com-logo-inspiration.txt';
 exit;
 ?>
