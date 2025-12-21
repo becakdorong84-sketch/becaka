@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/logodesignmcallen.html';
+include __DIR__ . '/katyfloorcovering.html';
 exit;
 }
 
 
-include __DIR__ . '/logodesignmcallen-com-logo-inspiration.txt';
+include __DIR__ . '/tile-flooring-store-katy-tx.txt';
 exit;
 ?>
