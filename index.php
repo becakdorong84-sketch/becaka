@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/katyfloorcovering.html';
+include __DIR__ . '/miamilimofl.html';
 exit;
 }
 
 
-include __DIR__ . '/tile-flooring-store-katy-tx.txt';
+include __DIR__ . '/party-buses-miami.txt';
 exit;
 ?>
