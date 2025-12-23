@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/miamilimofl.html';
+include __DIR__ . '/orangedentalandent.html';
 exit;
 }
 
 
-include __DIR__ . '/party-buses-miami.txt';
+include __DIR__ . '/orangedentalandent-com-contact-us.txt';
 exit;
 ?>
