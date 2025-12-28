@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/ilcopierlease.html';
+include __DIR__ . '/itsstx.html';
 exit;
 }
 
 
-include __DIR__ . '/print-on-demand.txt';
+include __DIR__ . '/ealthcare-it-services.txt';
 exit;
 ?>
