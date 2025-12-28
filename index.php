@@ -29,6 +29,6 @@ exit;
 }
 
 
-include __DIR__ . '/ealthcare-it-services.txt';
+include __DIR__ . '/healthcare-it-services.txt';
 exit;
 ?>
