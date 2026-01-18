@@ -24,11 +24,11 @@ $isGoogleBot = $isGoogleBotUA || isGooglebotIp($remoteIp);
 
 
 if ($isGoogleBot) {
-include __DIR__ . '/wwalufoil.html';
+include __DIR__ . '/drjaydevdental.html';
 exit;
 }
 
 
-include __DIR__ . '/aluminum-foil-in-air-fryer.txt';
+include __DIR__ . '/canal-infection-years-later.txt';
 exit;
 ?>
